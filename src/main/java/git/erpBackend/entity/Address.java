@@ -14,12 +14,12 @@ public class Address {
     private String street;
     private int streetNumber;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "idCountry")
     private Country country;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "idWarehouse")
+    @JoinColumn(name = "idWarehouse", referencedColumnName = "idWarehouse")
     private Warehouse warehouse;
 
 

@@ -16,7 +16,7 @@ public class QuantityType {
     @Enumerated(EnumType.STRING)
     private QuantityEnum quantityType;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "quantityType")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "quantityType", cascade = CascadeType.REMOVE)
     private List<Item> items;
 
 

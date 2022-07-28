@@ -3,9 +3,10 @@ package git.erpBackend.controller;
 import git.erpBackend.entity.Employee;
 import git.erpBackend.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,5 +19,15 @@ public class EmployeeController {
         return employeeRepository.save(employee);
     }
 
+    @GetMapping("/employees")
+    List<Employee> listEmployees(){
+        return employeeRepository.findAll();
+    }
+
+    @DeleteMapping("/employees")
+    ResponseEntity deteleEmployee(@RequestBody Integer idEmployee){
+        employeeRepository.deleteById(idEmployee);
+        return ResponseEntity.ok().build();
+    }
 
 }

@@ -15,7 +15,7 @@ public class Item {
     private String name;
     private double quantity;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "idQuantityType")
     private QuantityType quantityType;
 

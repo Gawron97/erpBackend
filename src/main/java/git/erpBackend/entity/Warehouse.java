@@ -12,10 +12,11 @@ public class Warehouse {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer idWarehouse;
 
-    @OneToOne(mappedBy = "warehouse")
+    @OneToOne(mappedBy = "warehouse", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Address address;
 
     @ManyToMany(mappedBy = "warehouses")
     private List<Item> items;
+
 
 }
