@@ -17,17 +17,17 @@ public class WarehouseController {
     private final WarehouseRepository warehouseRepository;
 
     @PostMapping("/warehouse")
-    Warehouse newWarehouse(@RequestBody Warehouse warehouse){
+    public Warehouse newWarehouse(@RequestBody Warehouse warehouse){
         return warehouseRepository.save(warehouse);
     }
 
     @GetMapping("/warehouse")
-    List<Warehouse> listWarehouses(){
+    public List<Warehouse> listWarehouses(){
         return warehouseRepository.findAll();
     }
 
     @DeleteMapping("/warehouse")
-    ResponseEntity deteleWarehouses(@RequestBody Integer idWarehouse){
+    public ResponseEntity deteleWarehouses(@RequestBody Integer idWarehouse){
         warehouseRepository.deleteById(idWarehouse);
         return ResponseEntity.ok().build();
     }

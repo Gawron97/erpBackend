@@ -12,7 +12,8 @@ public class Warehouse {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer idWarehouse;
 
-    @OneToOne(mappedBy = "warehouse", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "idAddress")
     private Address address;
 
     @ManyToMany(mappedBy = "warehouses")

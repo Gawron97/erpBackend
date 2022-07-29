@@ -15,7 +15,7 @@ public class Country {
     private String name;
     private int warehousesAmount;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "country")
+    @OneToMany(mappedBy = "country", fetch = FetchType.LAZY)
     private List<Address> addresses;
 
 

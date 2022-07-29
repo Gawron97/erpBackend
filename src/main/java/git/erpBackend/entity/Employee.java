@@ -14,6 +14,7 @@ public class Employee {
     private String name;
     private String surname;
 
+
     @OneToOne(mappedBy = "employee", cascade = CascadeType.ALL)
     private Operator operator;
 

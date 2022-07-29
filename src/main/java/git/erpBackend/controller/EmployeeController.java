@@ -15,17 +15,17 @@ public class EmployeeController {
     private final EmployeeRepository employeeRepository;
 
     @PostMapping("/employees")
-    Employee newEmployee(@RequestBody Employee employee){
+    public Employee newEmployee(@RequestBody Employee employee){
         return employeeRepository.save(employee);
     }
 
     @GetMapping("/employees")
-    List<Employee> listEmployees(){
+    public List<Employee> listEmployees(){
         return employeeRepository.findAll();
     }
 
     @DeleteMapping("/employees")
-    ResponseEntity deteleEmployee(@RequestBody Integer idEmployee){
+    public ResponseEntity deteleEmployee(@RequestBody Integer idEmployee){
         employeeRepository.deleteById(idEmployee);
         return ResponseEntity.ok().build();
     }

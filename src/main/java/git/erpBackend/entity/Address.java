@@ -18,10 +18,5 @@ public class Address {
     @JoinColumn(name = "idCountry")
     private Country country;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "idWarehouse", referencedColumnName = "idWarehouse")
-    private Warehouse warehouse;
-
-
 
 }

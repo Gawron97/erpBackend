@@ -13,7 +13,7 @@ public class Operator {
     private String login;
     private String password;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "idEmployee")
     private Employee employee;
 
