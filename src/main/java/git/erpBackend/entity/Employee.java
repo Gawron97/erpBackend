@@ -13,6 +13,7 @@ public class Employee {
     private Integer idEmployee;
     private String name;
     private String surname;
+    private String salary;
 
 
     @OneToOne(mappedBy = "employee", cascade = CascadeType.ALL)

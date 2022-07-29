@@ -1,5 +1,6 @@
 package git.erpBackend.controller;
 
+import git.erpBackend.dto.EmployeeDto;
 import git.erpBackend.entity.Employee;
 import git.erpBackend.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,12 +22,14 @@ public class EmployeeController {
     }
 
     @GetMapping("/employees")
-    public List<Employee> listEmployees(){
-        return employeeRepository.findAll();
+    public List<EmployeeDto> listEmployees(){
+        return employeeRepository.findAll().stream().map(employee -> {
+            return EmployeeDto.of(employee);
+        }).collect(Collectors.toList());
     }
 
     @DeleteMapping("/employees")
-    public ResponseEntity deteleEmployee(@RequestBody Integer idEmployee){
+    public ResponseEntity deleteEmployee(@RequestBody Integer idEmployee){
         employeeRepository.deleteById(idEmployee);
         return ResponseEntity.ok().build();
     }
