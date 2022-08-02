@@ -9,9 +9,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class Starter implements CommandLineRunner {
-//
-//    @Autowired
-//    EmployeeRepository employeeRepository;
+
+    @Autowired
+    EmployeeRepository employeeRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -28,6 +28,8 @@ public class Starter implements CommandLineRunner {
 //        employeeRepository.save(employee);
 //
 //        System.out.println(employee);
+
+        Generator.generuj(employeeRepository);
 
     }
 }

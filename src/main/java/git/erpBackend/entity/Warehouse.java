@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 public class Warehouse {
 
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idWarehouse;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)

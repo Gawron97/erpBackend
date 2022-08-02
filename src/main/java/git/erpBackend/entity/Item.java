@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 public class Item {
 
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idItem;
     private String name;
     private double quantity;

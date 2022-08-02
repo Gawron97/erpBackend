@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Data
 public class Operator {
 
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idOperator;
     private String login;
     private String password;

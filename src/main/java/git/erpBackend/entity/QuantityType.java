@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 public class QuantityType {
 
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idQuantityType;
 
     @Enumerated(EnumType.STRING)

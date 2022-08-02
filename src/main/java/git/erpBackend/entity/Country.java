@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 public class Country {
 
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idCountry;
     private String name;
     private int warehousesAmount;

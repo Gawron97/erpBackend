@@ -17,8 +17,8 @@ public class EmployeeController {
     private final EmployeeRepository employeeRepository;
 
     @PostMapping("/employees")
-    public Employee newEmployee(@RequestBody Employee employee){
-        return employeeRepository.save(employee);
+    public EmployeeDto newEmployee(@RequestBody EmployeeDto employeeDto){
+        return EmployeeDto.of(employeeRepository.save(Employee.of(employeeDto)));
     }
 
     @GetMapping("/employees")
