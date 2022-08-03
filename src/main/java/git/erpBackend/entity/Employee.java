@@ -39,4 +39,10 @@ public class Employee {
         return employee;
     }
 
+    public void updateEmployee(EmployeeDto employeeDto) {
+        this.name = employeeDto.getName();
+        this.surname = employeeDto.getSurname();
+        this.salary = employeeDto.getSalary();
+    }
+
 }

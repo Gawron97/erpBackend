@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -17,8 +18,19 @@ public class EmployeeController {
     private final EmployeeRepository employeeRepository;
 
     @PostMapping("/employees")
-    public EmployeeDto newEmployee(@RequestBody EmployeeDto employeeDto){
-        return EmployeeDto.of(employeeRepository.save(Employee.of(employeeDto)));
+    public EmployeeDto saveOrUpdateEmployee(@RequestBody EmployeeDto employeeDto){
+        if(employeeDto.getIdEmployee() == null)
+            return EmployeeDto.of(employeeRepository.save(Employee.of(employeeDto)));
+        else{
+            Optional<Employee> optionalEmployee = employeeRepository.findById(employeeDto.getIdEmployee());
+            if(optionalEmployee.isPresent()){
+                Employee employee = optionalEmployee.get();
+                employee.updateEmployee(employeeDto);
+                return EmployeeDto.of(employeeRepository.save(employee));
+            }else {
+                throw new RuntimeException("Nie mozna znalezc uzytkownika z takim Id");
+            }
+        }
     }
 
     @GetMapping("/employees")
@@ -28,8 +40,15 @@ public class EmployeeController {
         }).collect(Collectors.toList());
     }
 
-    @DeleteMapping("/employees")
-    public ResponseEntity deleteEmployee(@RequestBody Integer idEmployee){
+    @GetMapping("/employees/{idEmployee}")
+    public EmployeeDto getEmployee(@PathVariable Integer idEmployee) throws InterruptedException {
+        Thread.sleep(2000);
+        Optional<Employee> employee = employeeRepository.findById(idEmployee);
+        return EmployeeDto.of(employee.get());
+    }
+
+    @DeleteMapping("/employees/{idEmployee}")
+    public ResponseEntity deleteEmployee(@PathVariable Integer idEmployee){
         employeeRepository.deleteById(idEmployee);
         return ResponseEntity.ok().build();
     }
