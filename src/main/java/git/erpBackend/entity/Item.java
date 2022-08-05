@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JacksonInject;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -15,7 +16,7 @@ public class Item {
     private String name;
     private double quantity;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "idQuantityType")
     private QuantityType quantityType;
 
@@ -23,5 +24,13 @@ public class Item {
     @JoinTable(name = "item_warehouse", joinColumns = @JoinColumn(name = "idItem"),
             inverseJoinColumns = @JoinColumn(name = "idWarehouse"))
     private List<Warehouse> warehouses;
+
+    public Item(){
+        warehouses = new ArrayList<>();
+    }
+
+    public void addWarehouse(Warehouse warehouse){
+        warehouses.add(warehouse);
+    }
 
 }
