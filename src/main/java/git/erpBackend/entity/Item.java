@@ -1,11 +1,8 @@
 package git.erpBackend.entity;
 
-import com.fasterxml.jackson.annotation.JacksonInject;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Data
@@ -20,17 +17,18 @@ public class Item {
     @JoinColumn(name = "idQuantityType")
     private QuantityType quantityType;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "item_warehouse", joinColumns = @JoinColumn(name = "idItem"),
-            inverseJoinColumns = @JoinColumn(name = "idWarehouse"))
-    private List<Warehouse> warehouses;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "idWarehouse")
+    private Warehouse warehouse;
 
-    public Item(){
-        warehouses = new ArrayList<>();
+    public void setQuantityType(QuantityType quantityType) {
+        this.quantityType = quantityType;
+        quantityType.addItem(this);
     }
 
-    public void addWarehouse(Warehouse warehouse){
-        warehouses.add(warehouse);
+    public void setWarehouse(Warehouse warehouse) {
+        this.warehouse = warehouse;
+        warehouse.addItem(this);
     }
 
 }

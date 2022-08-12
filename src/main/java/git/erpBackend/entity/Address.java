@@ -1,5 +1,6 @@
 package git.erpBackend.entity;
 
+import git.erpBackend.dto.AddressDto;
 import lombok.Data;
 import lombok.ToString;
 
@@ -20,5 +21,19 @@ public class Address {
     @JoinColumn(name = "idCountry")
     private Country country;
 
+    public void setCountry(Country country) {
+        this.country = country;
+        country.addAddress(this);
+    }
 
+    public static Address of(AddressDto dto){
+        Address address = new Address();
+        address.idAdress = dto.getIdAddress();
+        address.city = dto.getCity();
+        address.street = dto.getStreet();
+        address.streetNumber = dto.getStreetNumber();
+        address.country = Country.of(dto.getCountryDto());
+
+        return address;
+    }
 }

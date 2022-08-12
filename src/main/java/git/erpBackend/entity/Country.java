@@ -1,5 +1,6 @@
 package git.erpBackend.entity;
 
+import git.erpBackend.dto.CountryDto;
 import jdk.jfr.DataAmount;
 import lombok.Data;
 
@@ -25,6 +26,14 @@ public class Country {
 
     public void addAddress(Address address){
         addresses.add(address);
+    }
+
+    public static Country of(CountryDto dto){
+        Country country = new Country();
+        country.idCountry = dto.getIdCountry();
+        country.name = dto.getCountry();
+
+        return country;
     }
 
 

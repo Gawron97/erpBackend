@@ -1,5 +1,6 @@
 package git.erpBackend.entity;
 
+import git.erpBackend.dto.WarehouseDto;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -19,18 +20,34 @@ public class Warehouse {
     @JoinColumn(name = "idAddress")
     private Address address;
 
-    @ManyToMany(mappedBy = "warehouses", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "warehouse", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Item> items;
+
+    @ManyToMany(mappedBy = "warehouses", fetch = FetchType.LAZY)
+    private List<ItemSum> itemSums;
 
     public Warehouse(){
         items = new ArrayList<>();
+        itemSums = new ArrayList<>();
     }
 
     public void addItem(Item item){
         items.add(item);
     }
 
+    public void addItemSum(ItemSum itemSum){
+        itemSums.add(itemSum);
+    }
 
+    public static Warehouse of(WarehouseDto dto){
+        Warehouse warehouse = new Warehouse();
 
+        warehouse.idWarehouse = dto.getIdWarehouse();
+        warehouse.name = dto.getName();
+        warehouse.address = Address.of(dto.getAddressDto());
+
+        return warehouse;
+
+    }
 
 }

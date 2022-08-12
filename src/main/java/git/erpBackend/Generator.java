@@ -1,21 +1,23 @@
 package git.erpBackend;
 
 import com.github.javafaker.Faker;
+import git.erpBackend.dto.ItemDto;
+import git.erpBackend.dto.WarehouseDto;
 import git.erpBackend.entity.*;
 import git.erpBackend.enums.QuantityEnum;
 import git.erpBackend.repository.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate5.SpringSessionContext;
-import org.springframework.stereotype.Component;
+import git.erpBackend.service.ItemService;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+
 public class Generator {
 
     private static Faker faker = new Faker();
+    private static List<Warehouse> warehouses = new ArrayList<>();
 
     public static void generujEmployee(EmployeeRepository employeeRepository, int ile){
 
@@ -51,16 +53,18 @@ public class Generator {
             Country country = countryList.get(faker.number().numberBetween(0, ile / 2));
 
             address.setCountry(country);
-            country.addAddress(address);
 
             warehouse.setAddress(address);
+
+            warehouses.add(warehouse);
 
             warehouseRepository.save(warehouse);
         }
 
     }
 
-    public static void generujItems(ItemRepository itemRepository, QuantityTypeRepository quantityTypeRepository, int ile){
+    public static void generujItems(ItemRepository itemRepository, QuantityTypeRepository quantityTypeRepository,
+                                    WarehouseRepository warehouseRepository, ItemService itemService, int ile){
 
         QuantityType kilo = new QuantityType();
         kilo.setQuantityType(QuantityEnum.KILOGRAMS);
@@ -73,44 +77,29 @@ public class Generator {
 
 
         for(int i=0; i<ile; i++){
-            Item item = new Item();
+            ItemDto item = new ItemDto();
 
             item.setName(faker.commerce().productName());
             item.setQuantity(faker.number().numberBetween(10, 100));
             int i1 = faker.number().numberBetween(1, 3);
 
             if(i1 == 2){
-                item.setQuantityType(kilo);
-                kilo.addItem(item);
+                item.setQuantityType(kilo.getQuantityType().toString());
             }else{
-                item.setQuantityType(unit);
-                unit.addItem(item);
+                item.setQuantityType(unit.getQuantityType().toString());
             }
 
+            Optional<Warehouse> warehouse = warehouseRepository.
+                    findByNameWithItems(warehouses.get(faker.number().numberBetween(1, 6)).getName());
 
-            itemRepository.save(item);
+            item.setWarehouseName(warehouse.get().getName());
 
-        }
-    }
+            itemService.saveOrUpdateItem(item);
 
-    public static void polaczItemsWithWarehouses(ItemRepository itemRepository, WarehouseRepository warehouseRepository,
-                                                 int ile){
-
-
-
-        for(int i=1; i<=6; i++){
-            Optional<Warehouse> warehouse = warehouseRepository.findById(i);
-            for(int j=0; j<ile; j++){
-                Optional<Item> item = itemRepository.findById(faker.number().numberBetween(1, 49));
-                warehouse.get().addItem(item.get());
-                item.get().addWarehouse(warehouse.get());
-
-                itemRepository.save(item.get());
-            }
-            warehouseRepository.save(warehouse.get());
         }
 
 
     }
+
 
 }

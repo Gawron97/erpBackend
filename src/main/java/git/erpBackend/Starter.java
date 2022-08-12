@@ -1,9 +1,11 @@
 package git.erpBackend;
 
 import git.erpBackend.entity.Employee;
+import git.erpBackend.entity.ItemSum;
 import git.erpBackend.entity.Operator;
 import git.erpBackend.entity.QuantityType;
 import git.erpBackend.repository.*;
+import git.erpBackend.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -26,6 +28,9 @@ public class Starter implements CommandLineRunner {
     @Autowired
     CountryRepository countryRepository;
 
+    @Autowired
+    ItemService itemService;
+
     @Override
     public void run(String... args) throws Exception {
 //
@@ -44,8 +49,7 @@ public class Starter implements CommandLineRunner {
 
         Generator.generujEmployee(employeeRepository, 30);
         Generator.generujWarehouses(warehouseRepository, countryRepository, 6);
-        Generator.generujItems(itemRepository, quantityTypeRepository, 50);
-        Generator.polaczItemsWithWarehouses(itemRepository, warehouseRepository, 5);
+        Generator.generujItems(itemRepository, quantityTypeRepository, warehouseRepository, itemService, 50);
 
 
     }

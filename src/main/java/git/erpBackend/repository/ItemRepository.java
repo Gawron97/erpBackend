@@ -12,7 +12,5 @@ import java.util.Optional;
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Integer> {
 
-    @EntityGraph(attributePaths = "warehouses")
-    Optional<Item> findById(Integer id);
 
 }
