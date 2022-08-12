@@ -14,12 +14,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ItemController {
 
-    private final ItemRepository itemRepository;
     private final ItemService itemService;
 
     @PostMapping("/items")
     public ItemDto newItem(@RequestBody ItemDto item){
-        return itemService.saveOrUpdateItem(item);
+        return itemService.saveItem(item);
     }
 
     @GetMapping("/items")

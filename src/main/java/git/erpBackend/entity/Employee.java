@@ -26,7 +26,6 @@ public class Employee {
     @Setter @Getter
     private String salary;
 
-
     @OneToOne(mappedBy = "employee", cascade = CascadeType.ALL)
     private Operator operator;
 

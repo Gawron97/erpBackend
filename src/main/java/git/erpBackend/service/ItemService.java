@@ -36,7 +36,7 @@ public class ItemService {
     }
 
 
-    public ItemDto saveOrUpdateItem(ItemDto itemDto){
+    public ItemDto saveItem(ItemDto itemDto){
 
         Optional<Warehouse> warehouseOptional = warehouseRepository.findByNameWithItems(itemDto.getWarehouseName());
         Optional<Warehouse> warehouseOptional2 = warehouseRepository.findByNameWithItemSums(itemDto.getWarehouseName());

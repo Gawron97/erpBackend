@@ -2,13 +2,11 @@ package git.erpBackend;
 
 import com.github.javafaker.Faker;
 import git.erpBackend.dto.ItemDto;
-import git.erpBackend.dto.WarehouseDto;
 import git.erpBackend.entity.*;
 import git.erpBackend.enums.QuantityEnum;
 import git.erpBackend.repository.*;
 import git.erpBackend.service.ItemService;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -94,7 +92,7 @@ public class Generator {
 
             item.setWarehouseName(warehouse.get().getName());
 
-            itemService.saveOrUpdateItem(item);
+            itemService.saveItem(item);
 
         }
 
