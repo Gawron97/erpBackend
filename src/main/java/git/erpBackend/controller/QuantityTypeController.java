@@ -1,9 +1,11 @@
 package git.erpBackend.controller;
 
+import git.erpBackend.dto.QuantityTypeDto;
 import git.erpBackend.entity.Item;
 import git.erpBackend.entity.QuantityType;
 import git.erpBackend.repository.ItemRepository;
 import git.erpBackend.repository.QuantityTypeRepository;
+import git.erpBackend.service.QuantityTypeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,18 +17,19 @@ import java.util.List;
 public class QuantityTypeController {
 
     private final QuantityTypeRepository quantityTypeRepository;
+    private final QuantityTypeService quantityTypeService;
 
-    @PostMapping("/quantityType")
+    @PostMapping("/quantity_types")
     public QuantityType newQuantityType(@RequestBody QuantityType quantityType){
         return quantityTypeRepository.save(quantityType);
     }
 
-    @GetMapping("/quantityType")
-    public List<QuantityType> listQuantityTypes(){
-        return quantityTypeRepository.findAll();
+    @GetMapping("/quantity_types")
+    public List<QuantityTypeDto> listQuantityTypes(){
+        return quantityTypeService.getQuantityTypeList();
     }
 
-    @DeleteMapping("/quantityType")
+    @DeleteMapping("/quantity_types")
     public ResponseEntity deteleQuantityType(@RequestBody Integer idQuantityType){
         quantityTypeRepository.deleteById(idQuantityType);
         return ResponseEntity.ok().build();

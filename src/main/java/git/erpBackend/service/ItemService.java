@@ -2,8 +2,10 @@ package git.erpBackend.service;
 
 import git.erpBackend.dto.ItemDto;
 import git.erpBackend.dto.ItemSumDto;
+import git.erpBackend.dto.QuantityTypeDto;
 import git.erpBackend.entity.Item;
 import git.erpBackend.entity.ItemSum;
+import git.erpBackend.entity.QuantityType;
 import git.erpBackend.entity.Warehouse;
 import git.erpBackend.enums.QuantityEnum;
 import git.erpBackend.repository.ItemRepository;
@@ -55,17 +57,24 @@ public class ItemService {
             throw new RuntimeException("nie ma takiego magazynu");
         }
 
-        QuantityEnum quantityEnum;
-
-
-        if(itemDto.getQuantityType().equalsIgnoreCase("KILOGRAMS"))
-            quantityEnum = QuantityEnum.KILOGRAMS;
-        else
-            quantityEnum = QuantityEnum.UNIT;
+//        QuantityEnum quantityEnum;
+//
+//
+//        if(itemDto.getQuantityType().equalsIgnoreCase("KILOGRAMS"))
+//            quantityEnum = QuantityEnum.KILOGRAMS;
+//        else
+//            quantityEnum = QuantityEnum.UNIT;
 
         Optional<ItemSum> itemSumOptional = itemSumRepository.findByNameWithWarehouses(itemDto.getName());
         ItemSum itemSum;
         Item item;
+        QuantityType quantityType;
+
+        Optional<QuantityType> quantityTypeOptional = quantityTypeRepository.findById(itemDto.getQuantityTypeDto().getIdQuantityType());
+        if(quantityTypeOptional.isEmpty())
+            throw new RuntimeException("zle QuantityType");
+        else
+            quantityType = quantityTypeOptional.get();
 
         if(itemSumOptional.isPresent()){
             itemSum = itemSumOptional.get();
@@ -84,7 +93,7 @@ public class ItemService {
                 item = new Item();
                 item.setName(itemDto.getName());
 
-                item.setQuantityType(quantityTypeRepository.findByQuantityType(quantityEnum));
+                item.setQuantityType(quantityType);
                 item.setQuantity(itemDto.getQuantity());
                 item.setWarehouse(warehouseWithItems);
 
@@ -98,7 +107,7 @@ public class ItemService {
             item = new Item();
             item.setName(itemDto.getName());
 
-            item.setQuantityType(quantityTypeRepository.findByQuantityType(quantityEnum));
+            item.setQuantityType(quantityType);
             item.setQuantity(itemDto.getQuantity());
             item.setWarehouse(warehouseWithItems);
 

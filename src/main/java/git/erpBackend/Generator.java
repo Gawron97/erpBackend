@@ -2,6 +2,7 @@ package git.erpBackend;
 
 import com.github.javafaker.Faker;
 import git.erpBackend.dto.ItemDto;
+import git.erpBackend.dto.QuantityTypeDto;
 import git.erpBackend.entity.*;
 import git.erpBackend.enums.QuantityEnum;
 import git.erpBackend.repository.*;
@@ -82,9 +83,9 @@ public class Generator {
             int i1 = faker.number().numberBetween(1, 3);
 
             if(i1 == 2){
-                item.setQuantityType(kilo.getQuantityType().toString());
+                item.setQuantityTypeDto(QuantityTypeDto.of(kilo));
             }else{
-                item.setQuantityType(unit.getQuantityType().toString());
+                item.setQuantityTypeDto(QuantityTypeDto.of(unit));
             }
 
             Optional<Warehouse> warehouse = warehouseRepository.
