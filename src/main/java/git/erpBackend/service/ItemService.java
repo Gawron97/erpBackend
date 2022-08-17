@@ -57,14 +57,6 @@ public class ItemService {
             throw new RuntimeException("nie ma takiego magazynu");
         }
 
-//        QuantityEnum quantityEnum;
-//
-//
-//        if(itemDto.getQuantityType().equalsIgnoreCase("KILOGRAMS"))
-//            quantityEnum = QuantityEnum.KILOGRAMS;
-//        else
-//            quantityEnum = QuantityEnum.UNIT;
-
         Optional<ItemSum> itemSumOptional = itemSumRepository.findByNameWithWarehouses(itemDto.getName());
         ItemSum itemSum;
         Item item;
@@ -126,17 +118,55 @@ public class ItemService {
         return itemDto;
     }
 
+
+
     public List<ItemDto> getListOfItems(){
         List<ItemDto> collect = itemRepository.findAll().stream().map(item -> ItemDto.of(item)).collect(Collectors.toList());
         return collect;
     }
 
     public ResponseEntity deteleItem(Integer idItem){
-        itemRepository.deleteById(idItem);
+        Optional<Item> optionalItem = itemRepository.findById(idItem);
+        if(optionalItem.isEmpty())
+            throw new RuntimeException("brak takiego przedmiotu");
+        Item item = optionalItem.get();
+
+        Optional<ItemSum> optionalItemSum = itemSumRepository.findByNameWithWarehouses(item.getName());
+
+        if(optionalItemSum.isEmpty())
+            throw new RuntimeException("cos poszlo nie tak");
+
+        ItemSum itemSum = optionalItemSum.get();
+
+        Optional<Warehouse> optionalWarehouseWithItems = warehouseRepository.findByNameWithItems(item.getWarehouse().getName());
+        Optional<Warehouse> optionalWarehouseWithItemSums = warehouseRepository.findByNameWithItemSums(item.getWarehouse().getName());
+
+        if(optionalWarehouseWithItems.isEmpty() || optionalWarehouseWithItemSums.isEmpty())
+            throw new RuntimeException("cos nie tak ze sciaganiem magazynow");
+
+        itemSum.removeWarehouse(optionalWarehouseWithItemSums.get());
+        item.removeWarehouse(optionalWarehouseWithItems.get());
+
+        itemSum.setQuantity(itemSum.getQuantity() - item.getQuantity());
+
+        itemRepository.delete(item);
+
+        if(itemSum.getQuantity() == 0)
+            itemSumRepository.delete(itemSum);
+
         return ResponseEntity.ok().build();
+
     }
 
     public List<ItemSumDto> getListOfItemSum() {
         return itemSumRepository.findAll().stream().map(itemSum -> ItemSumDto.of(itemSum)).toList();
     }
+
+    public ItemDto getItemById(Integer idItem){
+        Optional<Item> optionalItem = itemRepository.findById(idItem);
+        if (optionalItem.isEmpty())
+            throw new RuntimeException("nie ma takiego itemu");
+        return ItemDto.of(optionalItem.get());
+    }
+
 }

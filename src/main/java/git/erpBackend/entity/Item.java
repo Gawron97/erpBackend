@@ -31,4 +31,9 @@ public class Item {
         warehouse.addItem(this);
     }
 
+    public void removeWarehouse(Warehouse warehouse){
+        this.warehouse = null;
+        warehouse.removeItem(this);
+    }
+
 }

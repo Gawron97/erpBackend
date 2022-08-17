@@ -50,4 +50,11 @@ public class Warehouse {
 
     }
 
+    public void removeItem(Item item) {
+        items.remove(item);
+    }
+
+    public void removeItemSum(ItemSum itemSum) {
+        itemSums.remove(itemSum);
+    }
 }

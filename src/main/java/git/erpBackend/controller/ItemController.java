@@ -26,9 +26,14 @@ public class ItemController {
         return itemService.getListOfItems();
     }
 
-    @DeleteMapping("/items")
-    public ResponseEntity deteleItem(@RequestBody Integer idItem){
+    @DeleteMapping("/items/{idItem}")
+    public ResponseEntity deteleItem(@PathVariable Integer idItem){
         return itemService.deteleItem(idItem);
+    }
+
+    @GetMapping("items/{idItem}")
+    public ItemDto getItem(@PathVariable Integer idItem){
+        return itemService.getItemById(idItem);
     }
 
     @GetMapping("/items_sum")

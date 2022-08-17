@@ -34,4 +34,8 @@ public class ItemSum {
         warehouse.addItemSum(this);
     }
 
+    public void removeWarehouse(Warehouse warehouse) {
+        warehouses.remove(warehouse);
+        warehouse.removeItemSum(this);
+    }
 }
