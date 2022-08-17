@@ -1,10 +1,12 @@
 package git.erpBackend.controller;
 
-import git.erpBackend.dto.OperatorAuthenticationResultDto;
-import git.erpBackend.dto.OperatorCredentialsDto;
+import git.erpBackend.dto.OperatorLoginCredentialsDto;
+import git.erpBackend.dto.OperatorRegisterCredentialsDto;
 import git.erpBackend.entity.Operator;
 import git.erpBackend.repository.OperatorRepository;
+import git.erpBackend.service.Authenticator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +18,8 @@ import java.util.Optional;
 public class OperatorController {
 
     private final OperatorRepository operatorRepository;
+    @Autowired
+    private final Authenticator authenticator;
 
     @PostMapping("/operator")
     public Operator newOperator(@RequestBody Operator operator){
@@ -33,24 +37,18 @@ public class OperatorController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/verify_operator_credentials")
-    public OperatorAuthenticationResultDto verifyOperatorCredentials(@RequestBody OperatorCredentialsDto operatorCredentialsDto){
+    @PostMapping("/verify_operator_login_credentials")
+    public OperatorLoginCredentialsDto verifyOperatorLoginCredentials(
+            @RequestBody OperatorLoginCredentialsDto operatorLoginCredentialsDto){
 
-        Optional<Operator> optionalOperator = operatorRepository.findByLogin(operatorCredentialsDto.getLogin());
-        if(optionalOperator.isEmpty()) {
-            return OperatorAuthenticationResultDto.createUnauthenticated();
-        }
-
-        Operator operator = optionalOperator.get();
-
-        if(!operator.getPassword().equals(operatorCredentialsDto.getPassword()))
-            return OperatorAuthenticationResultDto.createUnauthenticated();
-        else
-            return OperatorAuthenticationResultDto.of(operator);
-
-
+        return authenticator.loginAuthentication(operatorLoginCredentialsDto);
     }
 
+    @PostMapping("/verify_operator_register_credentials")
+    public OperatorRegisterCredentialsDto verifyOperatorRegisterCredentials(
+            @RequestBody OperatorRegisterCredentialsDto operatorRegisterCredentialsDto){
 
+        return authenticator.registerAuthentication(operatorRegisterCredentialsDto);
+    }
 
 }

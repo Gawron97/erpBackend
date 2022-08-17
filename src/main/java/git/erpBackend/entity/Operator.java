@@ -1,5 +1,6 @@
 package git.erpBackend.entity;
 
+import git.erpBackend.dto.OperatorRegisterCredentialsDto;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -16,5 +17,18 @@ public class Operator {
     @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "idEmployee")
     private Employee employee;
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+        employee.setOperator(this);
+    }
+
+    public static Operator of(OperatorRegisterCredentialsDto dto){
+        Operator operator = new Operator();
+        operator.login = dto.getLogin();
+        operator.password = dto.getPassword();
+
+        return operator;
+    }
 
 }

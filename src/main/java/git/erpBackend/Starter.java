@@ -31,6 +31,9 @@ public class Starter implements CommandLineRunner {
     @Autowired
     ItemService itemService;
 
+    @Autowired
+    PositionRepository positionRepository;
+
     @Override
     public void run(String... args) throws Exception {
 //
@@ -47,7 +50,7 @@ public class Starter implements CommandLineRunner {
 //
 //        System.out.println(employee);
 
-        Generator.generujEmployee(employeeRepository, 30);
+        Generator.generujEmployee(employeeRepository, positionRepository, 30);
         Generator.generujWarehouses(warehouseRepository, countryRepository, 6);
         Generator.generujItems(itemRepository, quantityTypeRepository, warehouseRepository, itemService, 50);
 

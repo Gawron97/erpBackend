@@ -2,7 +2,6 @@ package git.erpBackend.entity;
 
 
 import git.erpBackend.dto.EmployeeDto;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -18,6 +17,9 @@ public class Employee {
     private Integer idEmployee;
 
     @Setter @Getter
+    private String pesel;
+
+    @Setter @Getter
     private String name;
 
     @Setter @Getter
@@ -27,7 +29,20 @@ public class Employee {
     private String salary;
 
     @OneToOne(mappedBy = "employee", cascade = CascadeType.ALL)
+    @Getter @Setter
     private Operator operator;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "idPosition")
+    private Position position;
+
+    public Position getPosition() {
+        return position;
+    }
+
+    public void setPosition(Position position) {
+        this.position = position;
+    }
 
     public static Employee of(EmployeeDto employeeDto){
         Employee employee = new Employee();

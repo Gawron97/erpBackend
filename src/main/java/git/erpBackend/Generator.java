@@ -4,6 +4,7 @@ import com.github.javafaker.Faker;
 import git.erpBackend.dto.ItemDto;
 import git.erpBackend.dto.QuantityTypeDto;
 import git.erpBackend.entity.*;
+import git.erpBackend.enums.PositionEnum;
 import git.erpBackend.enums.QuantityEnum;
 import git.erpBackend.repository.*;
 import git.erpBackend.service.ItemService;
@@ -18,13 +19,32 @@ public class Generator {
     private static Faker faker = new Faker();
     private static List<Warehouse> warehouses = new ArrayList<>();
 
-    public static void generujEmployee(EmployeeRepository employeeRepository, int ile){
+    public static void generujEmployee(EmployeeRepository employeeRepository, PositionRepository positionRepository, int ile){
+
+        Position manager = new Position();
+        manager.setPositionEnum(PositionEnum.MANAGER);
+
+        Position regular_employee = new Position();
+        regular_employee.setPositionEnum(PositionEnum.REGULAR_EMPLOYEE);
+
+        positionRepository.save(manager);
+        positionRepository.save(regular_employee);
+
+        Employee employee2 = new Employee();
+        employee2.setPesel("02223324467");
+        employee2.setName("Jakub");
+        employee2.setSurname("Gawron");
+        employee2.setSalary("10000");
+        employee2.setPosition(manager);
+        employeeRepository.save(employee2);
 
         for(int i=0; i<ile; i++){
             Employee employee = new Employee();
+            employee.setPesel(faker.bothify("123456789"));
             employee.setName(faker.name().firstName());
             employee.setSurname(faker.name().lastName());
             employee.setSalary(Integer.toString(faker.number().numberBetween(1000, 10000)));
+            employee.setPosition(regular_employee);
             employeeRepository.save(employee);
         }
     }
