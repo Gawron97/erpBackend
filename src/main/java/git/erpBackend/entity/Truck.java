@@ -1,10 +1,12 @@
 package git.erpBackend.entity;
 
-import git.erpBackend.enums.PositionEnum;
 import lombok.*;
 import org.hibernate.Hibernate;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.util.Objects;
 
 @Entity
@@ -12,20 +14,19 @@ import java.util.Objects;
 @Setter
 @ToString
 @RequiredArgsConstructor
-public class Position {
+public class Truck {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idPosition;
-
-    @Enumerated(EnumType.STRING)
-    private PositionEnum positionEnum;
+    private Integer idTruck;
+    private String name;
+    private double capacity;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        Position position = (Position) o;
-        return idPosition != null && Objects.equals(idPosition, position.idPosition);
+        Truck truck = (Truck) o;
+        return idTruck != null && Objects.equals(idTruck, truck.idTruck);
     }
 
     @Override

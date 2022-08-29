@@ -2,6 +2,7 @@ package git.erpBackend.controller;
 
 import git.erpBackend.dto.ItemDto;
 import git.erpBackend.dto.ItemSumDto;
+import git.erpBackend.dto.TransportDto;
 import git.erpBackend.repository.ItemRepository;
 import git.erpBackend.service.ItemService;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +40,11 @@ public class ItemController {
     @GetMapping("/items_sum")
     public List<ItemSumDto> getListOfSumOfItems(){
         return itemService.getListOfItemSum();
+    }
+
+    @GetMapping("/transport/{idItem}")
+    public TransportDto getTransportDto(@PathVariable Integer idItem){
+        return itemService.getTransportDetails(idItem);
     }
 
 }

@@ -117,6 +117,17 @@ public class Generator {
 
         }
 
+    }
+
+    public static void generujTrucks(TruckRepository truckRepository, int ile){
+
+        for(int i=0; i<ile; i++){
+            Truck truck = new Truck();
+            truck.setName(faker.name().title());
+            truck.setCapacity(faker.number().numberBetween(1, 100));
+
+            truckRepository.save(truck);
+        }
 
     }
 

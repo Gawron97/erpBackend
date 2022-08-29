@@ -2,34 +2,27 @@ package git.erpBackend.entity;
 
 
 import git.erpBackend.dto.EmployeeDto;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
+@Getter
+@Setter
+@RequiredArgsConstructor
 @ToString(exclude = "operator")
 public class Employee {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Setter @Getter
     private Integer idEmployee;
-
-    @Setter @Getter
     private String pesel;
-
-    @Setter @Getter
     private String name;
-
-    @Setter @Getter
     private String surname;
-
-    @Setter @Getter
     private String salary;
 
     @OneToOne(mappedBy = "employee", cascade = CascadeType.ALL)
-    @Getter @Setter
     private Operator operator;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -59,4 +52,16 @@ public class Employee {
         this.salary = employeeDto.getSalary();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Employee employee = (Employee) o;
+        return idEmployee != null && Objects.equals(idEmployee, employee.idEmployee);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

@@ -34,6 +34,9 @@ public class Starter implements CommandLineRunner {
     @Autowired
     PositionRepository positionRepository;
 
+    @Autowired
+    TruckRepository truckRepository;
+
     @Override
     public void run(String... args) throws Exception {
 //
@@ -53,6 +56,7 @@ public class Starter implements CommandLineRunner {
         Generator.generujEmployee(employeeRepository, positionRepository, 30);
         Generator.generujWarehouses(warehouseRepository, countryRepository, 6);
         Generator.generujItems(itemRepository, quantityTypeRepository, warehouseRepository, itemService, 50);
+        Generator.generujTrucks(truckRepository, 5);
 
 
     }

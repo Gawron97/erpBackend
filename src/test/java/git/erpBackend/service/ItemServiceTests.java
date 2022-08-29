@@ -4,10 +4,7 @@ import git.erpBackend.dto.ItemDto;
 import git.erpBackend.dto.QuantityTypeDto;
 import git.erpBackend.entity.*;
 import git.erpBackend.enums.QuantityEnum;
-import git.erpBackend.repository.ItemRepository;
-import git.erpBackend.repository.ItemSumRepository;
-import git.erpBackend.repository.QuantityTypeRepository;
-import git.erpBackend.repository.WarehouseRepository;
+import git.erpBackend.repository.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,19 +26,22 @@ public class ItemServiceTests {
     private static WarehouseRepository warehouseRepository;
     private ItemSumRepository itemSumRepository;
     private static QuantityTypeRepository quantityTypeRepository;
-    private static ItemService itemService;
+    private ItemService itemService;
+    private static TruckRepository truckRepository;
 
     @BeforeAll
     public static void init(){
         warehouseRepository = mock(WarehouseRepository.class);
         quantityTypeRepository = mock(QuantityTypeRepository.class);
+        truckRepository = mock(TruckRepository.class);
     }
 
     @BeforeEach
     public void prepare(){
         itemRepository = mock(ItemRepository.class);
         itemSumRepository = mock(ItemSumRepository.class);
-        itemService = new ItemService(itemRepository, warehouseRepository, itemSumRepository, quantityTypeRepository);
+        itemService = new ItemService(itemRepository, warehouseRepository, itemSumRepository, quantityTypeRepository,
+                truckRepository);
     }
 
     @Test

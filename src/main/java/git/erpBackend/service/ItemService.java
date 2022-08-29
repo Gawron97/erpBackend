@@ -3,15 +3,10 @@ package git.erpBackend.service;
 import git.erpBackend.dto.ItemDto;
 import git.erpBackend.dto.ItemSumDto;
 import git.erpBackend.dto.QuantityTypeDto;
-import git.erpBackend.entity.Item;
-import git.erpBackend.entity.ItemSum;
-import git.erpBackend.entity.QuantityType;
-import git.erpBackend.entity.Warehouse;
+import git.erpBackend.dto.TransportDto;
+import git.erpBackend.entity.*;
 import git.erpBackend.enums.QuantityEnum;
-import git.erpBackend.repository.ItemRepository;
-import git.erpBackend.repository.ItemSumRepository;
-import git.erpBackend.repository.QuantityTypeRepository;
-import git.erpBackend.repository.WarehouseRepository;
+import git.erpBackend.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -27,17 +22,19 @@ public class ItemService {
     private WarehouseRepository warehouseRepository;
     private ItemSumRepository itemSumRepository;
     private QuantityTypeRepository quantityTypeRepository;
+    private TruckRepository truckRepository;
 
     public ItemService(){
     }
 
     @Autowired
     public ItemService(ItemRepository itemRepository, WarehouseRepository warehouseRepository, ItemSumRepository itemSumRepository,
-                       QuantityTypeRepository quantityTypeRepository){
+                       QuantityTypeRepository quantityTypeRepository, TruckRepository truckRepository){
         this.itemRepository = itemRepository;
         this.warehouseRepository = warehouseRepository;
         this.itemSumRepository = itemSumRepository;
         this.quantityTypeRepository = quantityTypeRepository;
+        this.truckRepository = truckRepository;
     }
 
     public ItemDto saveItem(ItemDto itemDto){
@@ -170,4 +167,16 @@ public class ItemService {
         return ItemDto.of(optionalItem.get());
     }
 
+    public TransportDto getTransportDetails(Integer idItem) {
+
+        Optional<Item> optionalItem = itemRepository.findById(idItem);
+
+        if (optionalItem.isEmpty())
+            throw new RuntimeException("blad przedmiotu");
+
+        List<Truck> trucks = truckRepository.findAll();
+
+        return TransportDto.of(optionalItem.get(), trucks);
+
+    }
 }

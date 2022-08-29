@@ -1,14 +1,17 @@
 package git.erpBackend.entity;
 
 import git.erpBackend.dto.AddressDto;
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
-@Data
-@ToString(exclude = "country")
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 public class Address {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,5 +38,18 @@ public class Address {
         address.country = Country.of(dto.getCountryDto());
 
         return address;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Address address = (Address) o;
+        return idAdress != null && Objects.equals(idAdress, address.idAdress);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }

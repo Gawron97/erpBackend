@@ -1,6 +1,7 @@
 package git.erpBackend.controller;
 
 import git.erpBackend.dto.ItemDto;
+import git.erpBackend.dto.WarehouseCBDto;
 import git.erpBackend.dto.WarehouseDto;
 import git.erpBackend.entity.Warehouse;
 import git.erpBackend.repository.WarehouseRepository;
@@ -37,6 +38,11 @@ public class WarehouseController {
     @GetMapping("/warehouses/{idWarehouse}")
     public WarehouseDto getWarehouseWithItems(@PathVariable Integer idWarehouse){
         return warehouseService.getWarehouse(idWarehouse);
+    }
+
+    @GetMapping("/warehouses_cb")
+    public List<WarehouseCBDto> getWarehousesCB(){
+        return warehouseService.getWarehousesCB();
     }
 
 }
