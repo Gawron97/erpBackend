@@ -2,6 +2,7 @@ package git.erpBackend.entity;
 
 import git.erpBackend.dto.WarehouseDto;
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import java.util.List;
 
 @Entity
 @Data
+@ToString(exclude = {"items", "itemSums"})
 public class Warehouse {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

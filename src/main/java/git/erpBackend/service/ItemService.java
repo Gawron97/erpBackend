@@ -23,10 +23,13 @@ import java.util.stream.Collectors;
 @Service
 public class ItemService {
 
-    private final ItemRepository itemRepository;
-    private final WarehouseRepository warehouseRepository;
-    private final ItemSumRepository itemSumRepository;
-    private final QuantityTypeRepository quantityTypeRepository;
+    private ItemRepository itemRepository;
+    private WarehouseRepository warehouseRepository;
+    private ItemSumRepository itemSumRepository;
+    private QuantityTypeRepository quantityTypeRepository;
+
+    public ItemService(){
+    }
 
     @Autowired
     public ItemService(ItemRepository itemRepository, WarehouseRepository warehouseRepository, ItemSumRepository itemSumRepository,
@@ -36,7 +39,6 @@ public class ItemService {
         this.itemSumRepository = itemSumRepository;
         this.quantityTypeRepository = quantityTypeRepository;
     }
-
 
     public ItemDto saveItem(ItemDto itemDto){
 
@@ -73,7 +75,8 @@ public class ItemService {
             itemSum.setQuantity(itemSum.getQuantity() + itemDto.getQuantity());
 
             List<Item> items = warehouseWithItems.getItems();
-            List<Item> possibleItem = items.stream().filter(itemFilter -> itemFilter.getName().equals(itemDto.getName())).toList();
+            List<Item> possibleItem = items.stream().filter(itemFilter ->
+                    itemFilter.getName().equalsIgnoreCase(itemDto.getName())).toList();
 
             if(possibleItem.size() == 1){
 
@@ -88,8 +91,6 @@ public class ItemService {
                 item.setQuantityType(quantityType);
                 item.setQuantity(itemDto.getQuantity());
                 item.setWarehouse(warehouseWithItems);
-
-                itemRepository.save(item);
 
                 itemSum.addWarehouse(warehouseWithItemSums);
             }

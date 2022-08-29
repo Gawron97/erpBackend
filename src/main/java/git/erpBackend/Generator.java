@@ -34,7 +34,7 @@ public class Generator {
         employee2.setPesel("02223324467");
         employee2.setName("Jakub");
         employee2.setSurname("Gawron");
-        employee2.setSalary("10000");
+        employee2.setSalary("1000");
         employee2.setPosition(manager);
         employeeRepository.save(employee2);
 

@@ -3,6 +3,7 @@ package git.erpBackend.entity;
 import git.erpBackend.enums.QuantityEnum;
 import git.erpBackend.repository.QuantityTypeRepository;
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.List;
 
 @Entity
 @Data
+@ToString(exclude = "items")
 public class QuantityType {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
