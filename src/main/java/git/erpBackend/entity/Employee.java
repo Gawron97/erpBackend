@@ -13,6 +13,7 @@ import java.util.Objects;
 @Setter
 @RequiredArgsConstructor
 @ToString(exclude = "operator")
+@EqualsAndHashCode
 public class Employee {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,16 +53,4 @@ public class Employee {
         this.salary = employeeDto.getSalary();
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        Employee employee = (Employee) o;
-        return idEmployee != null && Objects.equals(idEmployee, employee.idEmployee);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
 }

@@ -12,6 +12,7 @@ import java.util.Objects;
 @Setter
 @ToString
 @RequiredArgsConstructor
+@EqualsAndHashCode
 public class Operator {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,16 +37,4 @@ public class Operator {
         return operator;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        Operator operator = (Operator) o;
-        return idOperator != null && Objects.equals(idOperator, operator.idOperator);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
 }

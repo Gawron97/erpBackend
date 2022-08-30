@@ -13,6 +13,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
+@EqualsAndHashCode
 public class QuantityType {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,6 +24,7 @@ public class QuantityType {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "quantityType")
     @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<Item> items;
 
     public QuantityType(){
@@ -33,17 +35,4 @@ public class QuantityType {
         items.add(item);
     }
 
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        QuantityType that = (QuantityType) o;
-        return idQuantityType != null && Objects.equals(idQuantityType, that.idQuantityType);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
 }

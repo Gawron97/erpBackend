@@ -14,6 +14,7 @@ import java.util.Objects;
 @Setter
 @ToString
 @RequiredArgsConstructor
+@EqualsAndHashCode
 public class Truck {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,16 +22,4 @@ public class Truck {
     private String name;
     private double capacity;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        Truck truck = (Truck) o;
-        return idTruck != null && Objects.equals(idTruck, truck.idTruck);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
 }

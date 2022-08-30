@@ -12,6 +12,7 @@ import java.util.Objects;
 @Setter
 @ToString
 @RequiredArgsConstructor
+@EqualsAndHashCode
 public class Position {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,16 +21,4 @@ public class Position {
     @Enumerated(EnumType.STRING)
     private PositionEnum positionEnum;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        Position position = (Position) o;
-        return idPosition != null && Objects.equals(idPosition, position.idPosition);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
 }

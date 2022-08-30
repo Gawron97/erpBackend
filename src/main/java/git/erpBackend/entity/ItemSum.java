@@ -12,6 +12,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
+@EqualsAndHashCode
 public class ItemSum {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +28,7 @@ public class ItemSum {
     @JoinTable(name = "itemSum_warehouses", joinColumns = @JoinColumn(name = "IdItemSum"),
             inverseJoinColumns = @JoinColumn(name = "IdWarehouse"))
     @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<Warehouse> warehouses;
 
     public ItemSum(){
@@ -44,16 +46,4 @@ public class ItemSum {
         warehouse.removeItemSum(this);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        ItemSum itemSum = (ItemSum) o;
-        return id != null && Objects.equals(id, itemSum.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
 }

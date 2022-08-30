@@ -12,6 +12,8 @@ import java.util.Objects;
 @Entity
 @Getter
 @Setter
+@ToString
+@EqualsAndHashCode
 public class Warehouse {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,10 +27,12 @@ public class Warehouse {
 
     @OneToMany(mappedBy = "warehouse", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<Item> items;
 
     @ManyToMany(mappedBy = "warehouses", fetch = FetchType.LAZY)
     @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<ItemSum> itemSums;
 
     public Warehouse(){
@@ -63,16 +67,4 @@ public class Warehouse {
         itemSums.remove(itemSum);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        Warehouse warehouse = (Warehouse) o;
-        return idWarehouse != null && Objects.equals(idWarehouse, warehouse.idWarehouse);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
 }

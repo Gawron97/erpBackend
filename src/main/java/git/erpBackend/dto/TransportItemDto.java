@@ -5,14 +5,11 @@ import lombok.Data;
 @Data
 public class TransportItemDto {
 
-    private Integer id;
-    private String name;
-    private double oldQuantity;
-    private double newQuantity;
-    private QuantityTypeDto quantityTypeDto;
+    private Integer idItem;
+    private double quantityToSend;
     private String transportationType;
-    private Integer oldWarehouseId;
     private Integer newWarehouseId;
+    private Integer idTruck;
 
 
 }

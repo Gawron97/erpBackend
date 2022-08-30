@@ -10,7 +10,7 @@ public class ItemDto {
     private String name;
     private double quantity;
     private QuantityTypeDto quantityTypeDto;
-    private String warehouseName;
+    private Integer idWarehouse;
 
     public static ItemDto of(Item item){
         ItemDto dto = new ItemDto();
@@ -18,7 +18,7 @@ public class ItemDto {
         dto.name = item.getName();
         dto.quantity = item.getQuantity();
         dto.quantityTypeDto = QuantityTypeDto.of(item.getQuantityType());
-        dto.warehouseName = item.getWarehouse().getName();
+        dto.idWarehouse = item.getWarehouse().getIdWarehouse();
 
         return dto;
     }

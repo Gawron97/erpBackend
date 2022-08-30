@@ -3,7 +3,7 @@ package git.erpBackend.controller;
 import git.erpBackend.dto.ItemDto;
 import git.erpBackend.dto.ItemSumDto;
 import git.erpBackend.dto.TransportDto;
-import git.erpBackend.repository.ItemRepository;
+import git.erpBackend.dto.TransportItemDto;
 import git.erpBackend.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,10 +27,10 @@ public class ItemController {
         return itemService.getListOfItems();
     }
 
-    @DeleteMapping("/items/{idItem}")
-    public ResponseEntity deteleItem(@PathVariable Integer idItem){
-        return itemService.deteleItem(idItem);
-    }
+//    @DeleteMapping("/items/{idItem}")
+//    public ResponseEntity deteleItem(@PathVariable Integer idItem){
+//        return itemService.deteleItem(idItem);
+//    }
 
     @GetMapping("items/{idItem}")
     public ItemDto getItem(@PathVariable Integer idItem){
@@ -45,6 +45,11 @@ public class ItemController {
     @GetMapping("/transport/{idItem}")
     public TransportDto getTransportDto(@PathVariable Integer idItem){
         return itemService.getTransportDetails(idItem);
+    }
+
+    @PostMapping("/transport")
+    public ResponseEntity transportItem(@RequestBody TransportItemDto transportItemDto){
+        return itemService.transportItem(transportItemDto);
     }
 
 }
