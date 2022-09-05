@@ -23,13 +23,24 @@ public class WarehouseService {
     }
 
 
-    public WarehouseDto getWarehouse(Integer idWarehouse) {
+    public WarehouseDto getWarehouseDetails(Integer idWarehouse) {
         Optional<Warehouse> warehouseOptional = warehouseRepository.findById(idWarehouse);
 
         if(warehouseOptional.isPresent()){
             return WarehouseDto.of(warehouseOptional.get());
         }
         throw new RuntimeException("Nie znaleziono magazynu o id: " + idWarehouse);
+    }
+
+    public WarehouseDto getWarehouseWithItems(Integer idWarehouse) {
+
+        Optional<Warehouse> warehouseOptional = warehouseRepository.findByIdWithItems(idWarehouse);
+
+        if(warehouseOptional.isPresent()){
+            return WarehouseDto.of(warehouseOptional.get());
+        }
+        throw new RuntimeException("Nie znaleziono magazynu o id: " + idWarehouse);
+
     }
 
     public ResponseEntity deteleWarehouses(Integer idWarehouse){
@@ -50,4 +61,5 @@ public class WarehouseService {
         return warehouseRepository.findAll().stream().map(warehouse -> WarehouseCBDto.of(warehouse)).toList();
 
     }
+
 }

@@ -25,4 +25,7 @@ public interface WarehouseRepository extends JpaRepository<Warehouse, Integer> {
     @Query("SELECT w FROM Warehouse w WHERE w.idWarehouse = :id")
     Optional<Warehouse> findByIdWithItemSums(@Param(value = "id") Integer id);
 
+    @EntityGraph(attributePaths = {"name", "address", "address.country"})
+    @Override
+    Optional<Warehouse> findById(Integer integer);
 }

@@ -35,9 +35,14 @@ public class WarehouseController {
         return warehouseService.deteleWarehouses(idWarehouse);
     }
 
+    @GetMapping("/warehouse/details/{idWarehouse}")
+    public WarehouseDto getWarehouseDetails(@PathVariable Integer idWarehouse){
+        return warehouseService.getWarehouseDetails(idWarehouse);
+    }
+
     @GetMapping("/warehouses/{idWarehouse}")
     public WarehouseDto getWarehouseWithItems(@PathVariable Integer idWarehouse){
-        return warehouseService.getWarehouse(idWarehouse);
+        return warehouseService.getWarehouseWithItems(idWarehouse);
     }
 
     @GetMapping("/warehouses_cb")
