@@ -4,6 +4,7 @@ import git.erpBackend.dto.*;
 import git.erpBackend.entity.*;
 import git.erpBackend.enums.QuantityEnum;
 import git.erpBackend.repository.*;
+import git.erpBackend.util.DoubleRound;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -64,6 +65,9 @@ public class ItemService {
         else
             quantityType = quantityTypeOptional.get();
 
+        //koniec inicjalizacji zmiennych
+        //czesc wykonawcza
+
         if(itemSumOptional.isPresent()){
             itemSum = itemSumOptional.get();
             itemSum.setQuantity(itemSum.getQuantity() + itemDto.getQuantity());
@@ -72,30 +76,36 @@ public class ItemService {
             List<Item> possibleItem = items.stream().filter(itemFilter ->
                     itemFilter.getName().equalsIgnoreCase(itemDto.getName())).toList();
 
-            if(possibleItem.size() == 1){
+            if(possibleItem.size() == 1){//przypadek gdzie przedmiot w magazynie juz byl
 
                 item = possibleItem.get(0);
-                item.setQuantity(item.getQuantity() + itemDto.getQuantity());
+                double averagePrice = calculateAveragePrice(item.getQuantity(), item.getPrice(),
+                        itemDto.getQuantity(), itemDto.getPrice());
 
-            }else {
+                item.setQuantity(item.getQuantity() + itemDto.getQuantity());
+                item.setPrice(averagePrice);
+
+            }else {//pzypadek gdzie przedmiotu w magazynie nie bylo
 
                 item = new Item();
                 item.setName(itemDto.getName());
 
                 item.setQuantityType(quantityType);
                 item.setQuantity(itemDto.getQuantity());
+                item.setPrice(itemDto.getPrice());
                 item.setWarehouse(warehouseWithItems);
 
                 itemSum.addWarehouse(warehouseWithItemSums);
             }
 
-        }else {
+        }else { // przypadek gdzie przedmiot nie wystepowal w zadnym magazynie
 
             item = new Item();
             item.setName(itemDto.getName());
 
             item.setQuantityType(quantityType);
             item.setQuantity(itemDto.getQuantity());
+            item.setPrice(itemDto.getPrice());
             item.setWarehouse(warehouseWithItems);
 
             itemSum = new ItemSum();
@@ -113,7 +123,15 @@ public class ItemService {
         return itemDto;
     }
 
+    private double calculateAveragePrice(double beforeItemQuantity, double beforeItemPrice,
+                                         double purchaseItemQuantity, double purchaseItemPrice) {
 
+        double priceForAllBefore = beforeItemQuantity * beforeItemPrice;
+        double priceForNewPurchase = purchaseItemQuantity * purchaseItemPrice;
+
+        double averagePrice = (priceForAllBefore + priceForNewPurchase) / (beforeItemQuantity + purchaseItemQuantity);
+        return DoubleRound.round2Places(averagePrice);
+    }
 
     public List<ItemDto> getListOfItems(){
         List<ItemDto> collect = itemRepository.findAll().stream().map(item -> ItemDto.of(item)).collect(Collectors.toList());
@@ -229,7 +247,10 @@ public class ItemService {
                 throw new RuntimeException("blad itemu");
 
             Item existingItem = optionalExistingItem.get();
+            double averagePrice = calculateAveragePrice(existingItem.getQuantity(), existingItem.getPrice(),
+                    transportItemDto.getQuantityToSend(), item.getPrice());
             existingItem.setQuantity(existingItem.getQuantity() + transportItemDto.getQuantityToSend());
+            existingItem.setPrice(averagePrice);
 
         } else if (filterItems.size() == 0) {
 
@@ -237,6 +258,7 @@ public class ItemService {
             newItem.setName(itemSum.getName());
             newItem.setQuantityType(itemSum.getQuantityType());
             newItem.setQuantity(transportItemDto.getQuantityToSend());
+            newItem.setPrice(item.getPrice());
             newItem.setWarehouse(newWarehouseItems);
             itemSum.addWarehouse(newWarehouseItemsSum);
 

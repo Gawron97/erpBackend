@@ -88,12 +88,12 @@ public class ItemServiceTests {
         quantityTypeDto.setIdQuantityType(1);
         quantityTypeDto.setName("kilo");
 
-
         //When
         ItemDto itemDto = new ItemDto();
         itemDto.setName("grain");
         itemDto.setQuantityTypeDto(quantityTypeDto);
         itemDto.setQuantity(50);
+        itemDto.setPrice(20);
         itemDto.setIdWarehouse(1);
 
         when(warehouseRepository.findByIdWithItems(itemDto.getIdWarehouse())).thenReturn(Optional.of(warehouse));
@@ -107,6 +107,7 @@ public class ItemServiceTests {
         Item expectedItem = new Item();
         expectedItem.setName("grain");
         expectedItem.setQuantity(50);
+        expectedItem.setPrice(20);
         expectedItem.setQuantityType(quantityType);
         expectedItem.setWarehouse(warehouse);
 
@@ -141,6 +142,7 @@ public class ItemServiceTests {
         item.setName("grain");
         item.setQuantityType(quantityType);
         item.setQuantity(50);
+        item.setPrice(80);
         item.setWarehouse(warehouse);
 
         ItemSum itemSum = new ItemSum();
@@ -155,10 +157,11 @@ public class ItemServiceTests {
         itemDto.setName("grain");
         itemDto.setQuantityTypeDto(quantityTypeDto);
         itemDto.setQuantity(120);
+        itemDto.setPrice(30);
         itemDto.setIdWarehouse(2);
 
         when(warehouseRepository.findByIdWithItems(itemDto.getIdWarehouse())).thenReturn(Optional.of(wroclawWarehouse));
-        when(warehouseRepository.findByIdWithItemSums(itemDto.getIdItem())).thenReturn(Optional.of(wroclawWarehouse));
+        when(warehouseRepository.findByIdWithItemSums(itemDto.getIdWarehouse())).thenReturn(Optional.of(wroclawWarehouse));
         when(itemSumRepository.findByNameWithWarehouses(itemDto.getName())).thenReturn(Optional.of(itemSum));
         when(quantityTypeRepository.findById(itemDto.getQuantityTypeDto().getIdQuantityType())).thenReturn(Optional.of(quantityType));
 
@@ -168,6 +171,7 @@ public class ItemServiceTests {
         Item expectedItem = new Item();
         expectedItem.setName("grain");
         expectedItem.setQuantity(120);
+        expectedItem.setPrice(30);
         expectedItem.setQuantityType(quantityType);
         expectedItem.setWarehouse(wroclawWarehouse);
 
@@ -205,6 +209,7 @@ public class ItemServiceTests {
         item.setName("grain");
         item.setQuantityType(quantityType);
         item.setQuantity(50);
+        item.setPrice(20);
         item.setWarehouse(warehouse);
 
         ItemSum itemSum = new ItemSum();
@@ -219,6 +224,7 @@ public class ItemServiceTests {
         itemDto.setName("grain");
         itemDto.setQuantityTypeDto(quantityTypeDto);
         itemDto.setQuantity(120);
+        itemDto.setPrice(30);
         itemDto.setIdWarehouse(2);
 
         when(warehouseRepository.findByIdWithItems(itemDto.getIdWarehouse())).thenReturn(Optional.of(wroclawWarehouse));
@@ -229,8 +235,8 @@ public class ItemServiceTests {
         itemService.saveItem(itemDto);
 
         //Then
-        assertEquals(warehouse.getItems().size(), 1);
-        assertEquals(wroclawWarehouse.getItems().size(), 1);
+        assertEquals(1, warehouse.getItems().size());
+        assertEquals(1, wroclawWarehouse.getItems().size());
 
     }
 
@@ -251,6 +257,7 @@ public class ItemServiceTests {
         item.setName("grain");
         item.setQuantityType(quantityType);
         item.setQuantity(50);
+        item.setPrice(20);
         item.setWarehouse(warehouse);
 
         ItemSum itemSum = new ItemSum();
@@ -265,7 +272,8 @@ public class ItemServiceTests {
         itemDto.setName("grain");
         itemDto.setQuantityTypeDto(quantityTypeDto);
         itemDto.setQuantity(120);
-        itemDto.setIdItem(1);
+        itemDto.setPrice(10);
+        itemDto.setIdWarehouse(1);
 
         when(warehouseRepository.findByIdWithItems(itemDto.getIdWarehouse())).thenReturn(Optional.of(warehouse));
         when(warehouseRepository.findByIdWithItemSums(itemDto.getIdWarehouse())).thenReturn(Optional.of(warehouse));
@@ -280,6 +288,7 @@ public class ItemServiceTests {
         expectedItem.setName("grain");
         expectedItem.setQuantityType(quantityType);
         expectedItem.setQuantity(170);
+        expectedItem.setPrice(12.94);
         expectedItem.setWarehouse(warehouse);
 
         ItemSum expectedItemSum = new ItemSum();
@@ -315,6 +324,7 @@ public class ItemServiceTests {
         item.setName("wheat");
         item.setQuantityType(quantityType);
         item.setQuantity(50);
+        item.setPrice(20);
         item.setWarehouse(warehouse);
 
         Item item2 = new Item();
@@ -322,6 +332,7 @@ public class ItemServiceTests {
         item2.setName("wheat");
         item2.setQuantityType(quantityType);
         item2.setQuantity(60);
+        item2.setPrice(21);
         item2.setWarehouse(wroclawWarehouse);
 
         ItemSum itemSum = new ItemSum();
@@ -337,7 +348,8 @@ public class ItemServiceTests {
         itemDto.setName("wheat");
         itemDto.setQuantityTypeDto(quantityTypeDto);
         itemDto.setQuantity(130);
-        itemDto.setIdItem(1);
+        itemDto.setPrice(15);
+        itemDto.setIdWarehouse(1);
 
         when(warehouseRepository.findByIdWithItems(itemDto.getIdWarehouse())).thenReturn(Optional.of(warehouse));
         when(warehouseRepository.findByIdWithItemSums(itemDto.getIdWarehouse())).thenReturn(Optional.of(warehouse));
@@ -352,6 +364,7 @@ public class ItemServiceTests {
         expectedItem.setName("wheat");
         expectedItem.setQuantityType(quantityType);
         expectedItem.setQuantity(180);
+        expectedItem.setPrice(16.38);
         expectedItem.setWarehouse(warehouse);
 
         ItemSum expectedItemSum = new ItemSum();
@@ -384,6 +397,7 @@ public class ItemServiceTests {
         item.setName("corn");
         item.setQuantityType(quantityType);
         item.setQuantity(50);
+        item.setPrice(20);
         item.setWarehouse(warehouse);
 
         ItemSum itemSum = new ItemSum();
@@ -416,6 +430,7 @@ public class ItemServiceTests {
         expectedItem.setName("corn");
         expectedItem.setQuantityType(quantityType);
         expectedItem.setQuantity(50);
+        expectedItem.setPrice(20);
         expectedItem.setWarehouse(wroclawWarehouse);
 
         ItemSum expectedItemSum = new ItemSum();
@@ -428,7 +443,7 @@ public class ItemServiceTests {
         verify(itemRepository).delete(item);
         verify(itemRepository).save(expectedItem);
 
-        assertEquals(itemSum, expectedItemSum);
+        assertEquals(expectedItemSum, itemSum);
 
     }
 
@@ -449,6 +464,7 @@ public class ItemServiceTests {
         item.setName("corn");
         item.setQuantityType(quantityType);
         item.setQuantity(50);
+        item.setPrice(40);
         item.setWarehouse(warehouse);
 
         ItemSum itemSum = new ItemSum();
@@ -457,7 +473,6 @@ public class ItemServiceTests {
         itemSum.setQuantity(50);
         itemSum.setQuantityType(quantityType);
         itemSum.addWarehouse(warehouse);
-
 
         //When
         TransportItemDto transportItemDto = new TransportItemDto();
@@ -481,6 +496,7 @@ public class ItemServiceTests {
         expectedSaveItem.setName("corn");
         expectedSaveItem.setQuantityType(quantityType);
         expectedSaveItem.setQuantity(30);
+        expectedSaveItem.setPrice(40);
         expectedSaveItem.setWarehouse(wroclawWarehouse);
 
         Item expectedOldItem = new Item();
@@ -488,6 +504,7 @@ public class ItemServiceTests {
         expectedOldItem.setName("corn");
         expectedOldItem.setQuantityType(quantityType);
         expectedOldItem.setQuantity(20);
+        expectedOldItem.setPrice(40);
         expectedOldItem.setWarehouse(warehouse);
 
         ItemSum expectedItemSum = new ItemSum();
@@ -501,8 +518,8 @@ public class ItemServiceTests {
         verify(itemRepository, never()).delete(item);
         verify(itemRepository).save(expectedSaveItem);
 
-        assertEquals(item, expectedOldItem);
-        assertEquals(itemSum, expectedItemSum);
+        assertEquals(expectedOldItem, item);
+        assertEquals(expectedItemSum, itemSum);
     }
 
     @Test
@@ -522,6 +539,7 @@ public class ItemServiceTests {
         firstItem.setName("corn");
         firstItem.setQuantityType(quantityType);
         firstItem.setQuantity(50);
+        firstItem.setPrice(20);
         firstItem.setWarehouse(warehouse);
 
         Item secondItem = new Item();
@@ -529,6 +547,7 @@ public class ItemServiceTests {
         secondItem.setName("corn");
         secondItem.setQuantityType(quantityType);
         secondItem.setQuantity(70);
+        secondItem.setPrice(10);
         secondItem.setWarehouse(wroclawWarehouse);
 
         ItemSum itemSum = new ItemSum();
@@ -564,6 +583,7 @@ public class ItemServiceTests {
         expectedSecondItem.setName("corn");
         expectedSecondItem.setQuantityType(quantityType);
         expectedSecondItem.setQuantity(120);
+        expectedSecondItem.setPrice(14.16);
         expectedSecondItem.setWarehouse(wroclawWarehouse);
 
         ItemSum expectedItemSum = new ItemSum();
@@ -576,8 +596,8 @@ public class ItemServiceTests {
         verify(itemRepository).delete(firstItem);
         verify(itemRepository, never()).save(any());
 
-        assertEquals(secondItem, expectedSecondItem);
-        assertEquals(itemSum, expectedItemSum);
+        assertEquals(expectedSecondItem, secondItem);
+        assertEquals(expectedItemSum, itemSum);
     }
 
     @Test
@@ -597,6 +617,7 @@ public class ItemServiceTests {
         firstItem.setName("corn");
         firstItem.setQuantityType(quantityType);
         firstItem.setQuantity(50);
+        firstItem.setPrice(20);
         firstItem.setWarehouse(warehouse);
 
         Item secondItem = new Item();
@@ -604,6 +625,7 @@ public class ItemServiceTests {
         secondItem.setName("corn");
         secondItem.setQuantityType(quantityType);
         secondItem.setQuantity(70);
+        secondItem.setPrice(30);
         secondItem.setWarehouse(wroclawWarehouse);
 
         ItemSum itemSum = new ItemSum();
@@ -613,7 +635,6 @@ public class ItemServiceTests {
         itemSum.setQuantityType(quantityType);
         itemSum.addWarehouse(warehouse);
         itemSum.addWarehouse(wroclawWarehouse);
-
 
         //When
         TransportItemDto transportItemDto = new TransportItemDto();
@@ -639,6 +660,7 @@ public class ItemServiceTests {
         expectedFirstItem.setName("corn");
         expectedFirstItem.setQuantityType(quantityType);
         expectedFirstItem.setQuantity(30);
+        expectedFirstItem.setPrice(20);
         expectedFirstItem.setWarehouse(warehouse);
 
         Item expectedSecondItem = new Item();
@@ -646,6 +668,7 @@ public class ItemServiceTests {
         expectedSecondItem.setName("corn");
         expectedSecondItem.setQuantityType(quantityType);
         expectedSecondItem.setQuantity(90);
+        expectedSecondItem.setPrice(27.77);
         expectedSecondItem.setWarehouse(wroclawWarehouse);
 
         ItemSum expectedItemSum = new ItemSum();
@@ -659,9 +682,9 @@ public class ItemServiceTests {
         verify(itemRepository, never()).delete(any());
         verify(itemRepository, never()).save(any());
 
-        assertEquals(firstItem, expectedFirstItem);
-        assertEquals(secondItem, expectedSecondItem);
-        assertEquals(itemSum, expectedItemSum);
+        assertEquals(expectedFirstItem, firstItem);
+        assertEquals(expectedSecondItem, secondItem);
+        assertEquals(expectedItemSum, itemSum);
     }
     
 
