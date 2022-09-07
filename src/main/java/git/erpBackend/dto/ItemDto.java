@@ -9,6 +9,7 @@ public class ItemDto {
     private Integer idItem;
     private String name;
     private double quantity;
+    private double price;
     private QuantityTypeDto quantityTypeDto;
     private Integer idWarehouse;
 
@@ -17,6 +18,7 @@ public class ItemDto {
         dto.idItem = item.getIdItem();
         dto.name = item.getName();
         dto.quantity = item.getQuantity();
+        dto.price = item.getPrice();
         dto.quantityTypeDto = QuantityTypeDto.of(item.getQuantityType());
         dto.idWarehouse = item.getWarehouse().getIdWarehouse();
 

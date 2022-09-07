@@ -109,7 +109,7 @@ public class Generator {
             }
 
             Optional<Warehouse> warehouse = warehouseRepository.
-                    findByIdWithItems(warehouses.get(faker.number().numberBetween(1, 6)).getIdWarehouse());
+                    findByIdWithItems(warehouses.get(faker.number().numberBetween(0, 6)).getIdWarehouse());
 
             item.setIdWarehouse(warehouse.get().getIdWarehouse());
 
@@ -127,6 +127,22 @@ public class Generator {
             truck.setCapacity(faker.number().numberBetween(1, 100));
 
             truckRepository.save(truck);
+        }
+    }
+
+    public static void generujStockItem(StockItemRepository stockItemRepository,
+                                        QuantityTypeRepository quantityTypeRepository, int ile){
+
+        Optional<QuantityType> OpquantityType = quantityTypeRepository.findById(1);
+        QuantityType quantityType = OpquantityType.get();
+
+        for(int i=0; i<ile; i++){
+            StockItem stockItem = new StockItem();
+            stockItem.setName(faker.commerce().productName());
+            stockItem.setPrice(faker.number().numberBetween(10, 100));
+            stockItem.setQuantityType(quantityType);
+
+            stockItemRepository.save(stockItem);
         }
 
     }

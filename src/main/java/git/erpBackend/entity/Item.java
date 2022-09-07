@@ -18,6 +18,7 @@ public class Item {
     private Integer idItem;
     private String name;
     private double quantity;
+    private double price;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "idQuantityType")
