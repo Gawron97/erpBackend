@@ -16,7 +16,7 @@ import java.util.Objects;
 public class ItemSum {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Integer idItemSum;
     private String name;
     private double quantity;
 

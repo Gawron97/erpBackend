@@ -269,4 +269,12 @@ public class ItemService {
 
         return ResponseEntity.ok().build();
     }
+
+    public ItemSumDto getItemSumById(Integer idItemSum) {
+        Optional<ItemSum> optionalItemSum = itemSumRepository.findByIdWithWarehouses(idItemSum);
+        if(optionalItemSum.isEmpty())
+            throw new RuntimeException("nie ma itemSum o takim id");
+
+        return ItemSumDto.of(optionalItemSum.get());
+    }
 }

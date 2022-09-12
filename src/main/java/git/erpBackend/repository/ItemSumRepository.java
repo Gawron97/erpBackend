@@ -14,4 +14,8 @@ public interface ItemSumRepository extends JpaRepository<ItemSum, Integer> {
     @Query("SELECT i FROM ItemSum i WHERE i.name = :name")
     Optional<ItemSum> findByNameWithWarehouses(@Param(value = "name") String name);
 
+    @EntityGraph(attributePaths = {"name", "quantity", "quantityType", "warehouses"})
+    @Query("SELECT i FROM ItemSum i WHERE i.idItemSum = :id")
+    Optional<ItemSum> findByIdWithWarehouses(@Param(value = "id") Integer id);
+
 }

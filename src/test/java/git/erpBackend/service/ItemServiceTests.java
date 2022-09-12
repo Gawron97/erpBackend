@@ -7,11 +7,9 @@ import git.erpBackend.entity.*;
 import git.erpBackend.enums.QuantityEnum;
 import git.erpBackend.enums.TransportationTypeEnum;
 import git.erpBackend.repository.*;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -147,7 +145,7 @@ public class ItemServiceTests {
 
         ItemSum itemSum = new ItemSum();
         itemSum.setName("grain");
-        itemSum.setId(1);
+        itemSum.setIdItemSum(1);
         itemSum.setQuantity(50);
         itemSum.setQuantityType(quantityType);
         itemSum.addWarehouse(warehouse);
@@ -176,7 +174,7 @@ public class ItemServiceTests {
         expectedItem.setWarehouse(wroclawWarehouse);
 
         ItemSum expectedItemSum = new ItemSum();
-        expectedItemSum.setId(1);
+        expectedItemSum.setIdItemSum(1);
         expectedItemSum.setName("grain");
         expectedItemSum.setQuantityType(quantityType);
         expectedItemSum.setQuantity(170);
@@ -214,7 +212,7 @@ public class ItemServiceTests {
 
         ItemSum itemSum = new ItemSum();
         itemSum.setName("grain");
-        itemSum.setId(1);
+        itemSum.setIdItemSum(1);
         itemSum.setQuantity(50);
         itemSum.setQuantityType(quantityType);
         itemSum.addWarehouse(warehouse);
@@ -262,7 +260,7 @@ public class ItemServiceTests {
 
         ItemSum itemSum = new ItemSum();
         itemSum.setName("grain");
-        itemSum.setId(1);
+        itemSum.setIdItemSum(1);
         itemSum.setQuantity(50);
         itemSum.setQuantityType(quantityType);
         itemSum.addWarehouse(warehouse);
@@ -292,7 +290,7 @@ public class ItemServiceTests {
         expectedItem.setWarehouse(warehouse);
 
         ItemSum expectedItemSum = new ItemSum();
-        expectedItemSum.setId(1);
+        expectedItemSum.setIdItemSum(1);
         expectedItemSum.setName("grain");
         expectedItemSum.setQuantityType(quantityType);
         expectedItemSum.setQuantity(170);
@@ -337,7 +335,7 @@ public class ItemServiceTests {
 
         ItemSum itemSum = new ItemSum();
         itemSum.setName("wheat");
-        itemSum.setId(1);
+        itemSum.setIdItemSum(1);
         itemSum.setQuantity(110);
         itemSum.setQuantityType(quantityType);
         itemSum.addWarehouse(warehouse);
@@ -368,7 +366,7 @@ public class ItemServiceTests {
         expectedItem.setWarehouse(warehouse);
 
         ItemSum expectedItemSum = new ItemSum();
-        expectedItemSum.setId(1);
+        expectedItemSum.setIdItemSum(1);
         expectedItemSum.setName("wheat");
         expectedItemSum.setQuantityType(quantityType);
         expectedItemSum.setQuantity(240);
@@ -401,7 +399,7 @@ public class ItemServiceTests {
         item.setWarehouse(warehouse);
 
         ItemSum itemSum = new ItemSum();
-        itemSum.setId(1);
+        itemSum.setIdItemSum(1);
         itemSum.setName("corn");
         itemSum.setQuantity(50);
         itemSum.setQuantityType(quantityType);
@@ -434,7 +432,7 @@ public class ItemServiceTests {
         expectedItem.setWarehouse(wroclawWarehouse);
 
         ItemSum expectedItemSum = new ItemSum();
-        expectedItemSum.setId(1);
+        expectedItemSum.setIdItemSum(1);
         expectedItemSum.setName("corn");
         expectedItemSum.setQuantity(50);
         expectedItemSum.setQuantityType(quantityType);
@@ -468,7 +466,7 @@ public class ItemServiceTests {
         item.setWarehouse(warehouse);
 
         ItemSum itemSum = new ItemSum();
-        itemSum.setId(1);
+        itemSum.setIdItemSum(1);
         itemSum.setName("corn");
         itemSum.setQuantity(50);
         itemSum.setQuantityType(quantityType);
@@ -508,7 +506,7 @@ public class ItemServiceTests {
         expectedOldItem.setWarehouse(warehouse);
 
         ItemSum expectedItemSum = new ItemSum();
-        expectedItemSum.setId(1);
+        expectedItemSum.setIdItemSum(1);
         expectedItemSum.setName("corn");
         expectedItemSum.setQuantity(50);
         expectedItemSum.setQuantityType(quantityType);
@@ -551,7 +549,7 @@ public class ItemServiceTests {
         secondItem.setWarehouse(wroclawWarehouse);
 
         ItemSum itemSum = new ItemSum();
-        itemSum.setId(1);
+        itemSum.setIdItemSum(1);
         itemSum.setName("corn");
         itemSum.setQuantity(120);
         itemSum.setQuantityType(quantityType);
@@ -587,7 +585,7 @@ public class ItemServiceTests {
         expectedSecondItem.setWarehouse(wroclawWarehouse);
 
         ItemSum expectedItemSum = new ItemSum();
-        expectedItemSum.setId(1);
+        expectedItemSum.setIdItemSum(1);
         expectedItemSum.setName("corn");
         expectedItemSum.setQuantity(120);
         expectedItemSum.setQuantityType(quantityType);
@@ -629,7 +627,7 @@ public class ItemServiceTests {
         secondItem.setWarehouse(wroclawWarehouse);
 
         ItemSum itemSum = new ItemSum();
-        itemSum.setId(1);
+        itemSum.setIdItemSum(1);
         itemSum.setName("corn");
         itemSum.setQuantity(120);
         itemSum.setQuantityType(quantityType);
@@ -672,7 +670,7 @@ public class ItemServiceTests {
         expectedSecondItem.setWarehouse(wroclawWarehouse);
 
         ItemSum expectedItemSum = new ItemSum();
-        expectedItemSum.setId(1);
+        expectedItemSum.setIdItemSum(1);
         expectedItemSum.setName("corn");
         expectedItemSum.setQuantity(120);
         expectedItemSum.setQuantityType(quantityType);

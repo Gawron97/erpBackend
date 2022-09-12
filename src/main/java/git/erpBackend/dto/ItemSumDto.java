@@ -16,7 +16,7 @@ public class ItemSumDto {
 
     public static ItemSumDto of(ItemSum itemSum){
         ItemSumDto dto = new ItemSumDto();
-        dto.id = itemSum.getId();
+        dto.id = itemSum.getIdItemSum();
         dto.name = itemSum.getName();
         dto.quantity = itemSum.getQuantity();
         dto.quantityType = itemSum.getQuantityType().getQuantityType().toString();
