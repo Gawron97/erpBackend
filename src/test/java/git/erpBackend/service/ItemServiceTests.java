@@ -362,7 +362,7 @@ public class ItemServiceTests {
         expectedItem.setName("wheat");
         expectedItem.setQuantityType(quantityType);
         expectedItem.setQuantity(180);
-        expectedItem.setPrice(16.38);
+        expectedItem.setPrice(16.39);
         expectedItem.setWarehouse(warehouse);
 
         ItemSum expectedItemSum = new ItemSum();
@@ -581,7 +581,7 @@ public class ItemServiceTests {
         expectedSecondItem.setName("corn");
         expectedSecondItem.setQuantityType(quantityType);
         expectedSecondItem.setQuantity(120);
-        expectedSecondItem.setPrice(14.16);
+        expectedSecondItem.setPrice(14.17);
         expectedSecondItem.setWarehouse(wroclawWarehouse);
 
         ItemSum expectedItemSum = new ItemSum();
@@ -666,7 +666,7 @@ public class ItemServiceTests {
         expectedSecondItem.setName("corn");
         expectedSecondItem.setQuantityType(quantityType);
         expectedSecondItem.setQuantity(90);
-        expectedSecondItem.setPrice(27.77);
+        expectedSecondItem.setPrice(27.78);
         expectedSecondItem.setWarehouse(wroclawWarehouse);
 
         ItemSum expectedItemSum = new ItemSum();
@@ -684,7 +684,5 @@ public class ItemServiceTests {
         assertEquals(expectedSecondItem, secondItem);
         assertEquals(expectedItemSum, itemSum);
     }
-    
-
 
 }

@@ -1,17 +1,13 @@
 package git.erpBackend.entity;
 
 import com.github.javafaker.Faker;
-import com.google.common.math.DoubleMath;
-import git.erpBackend.util.DoubleRound;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.scheduling.annotation.Scheduled;
 
 import javax.persistence.*;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
+import java.util.List;
 
 @Entity
 @Getter
@@ -27,11 +23,13 @@ public class StockItem {
 
     @ManyToOne
     private QuantityType quantityType;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<Double> priceHistory;
 
     public void changePrice(){
         Faker faker = new Faker();
-        int downOrUp = 50;
-        int i = faker.number().numberBetween(1, 101); // od 1 do 100
+        int downOrUp = downOrUpRate(); // im wyzszy tym mniejsza szansa na wzrost ceny
+        int i = faker.number().numberBetween(-100, 116); // od -100 do 100
 
         double change = price/100;
 
@@ -40,9 +38,30 @@ public class StockItem {
         else if(i < downOrUp)
             price -= change;
 
-        price = DoubleRound.round2Places(price);
 
+        price = (double) Math.round(price * 100) / 100;
+
+        priceHistory.add(price);
     }
 
+    private int downOrUpRate(){
+
+        if(priceHistory.size() < 50)
+            return 50;
+
+        int position = priceHistory.size() - 50;
+
+        Double historicalPrice = priceHistory.get(position);
+
+        double priceChange = (price - historicalPrice) / historicalPrice * 100;
+
+        int rate = ((int) priceChange);
+
+        if(rate < 0)
+            rate *= 1.25;
+
+        return rate;
+
+    }
 
 }

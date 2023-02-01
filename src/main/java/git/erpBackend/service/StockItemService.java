@@ -23,7 +23,7 @@ public class StockItemService {
         return stockItemRepository.findAll().stream().map(stockItem -> StockItemDto.of(stockItem)).toList();
     }
 
-    @Scheduled(fixedDelay = 10000, initialDelay = 2000)
+    @Scheduled(fixedDelay = 1, initialDelay = 2000)
     private void changePrices(){
         List<StockItem> stockItems = stockItemRepository.findAll();
         stockItems.forEach(stockItem -> {

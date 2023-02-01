@@ -54,7 +54,7 @@ public class ItemController {
 
     @PostMapping("/transport")
     public ResponseEntity transportItem(@RequestBody TransportItemDto transportItemDto){
-        return itemService.transportItem(transportItemDto);
+        return itemService.transportItem(transportItemDto);//TODO przechwycic wyjatek rzucany w funkcji
     }
 
 }

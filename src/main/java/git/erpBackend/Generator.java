@@ -139,7 +139,7 @@ public class Generator {
         for(int i=0; i<ile; i++){
             StockItem stockItem = new StockItem();
             stockItem.setName(faker.commerce().productName());
-            stockItem.setPrice(faker.number().numberBetween(10, 100));
+            stockItem.setPrice(7);
             stockItem.setQuantityType(quantityType);
 
             stockItemRepository.save(stockItem);

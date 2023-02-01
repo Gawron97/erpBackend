@@ -60,7 +60,8 @@ public class Starter implements CommandLineRunner {
         Generator.generujWarehouses(warehouseRepository, countryRepository, 6);
         Generator.generujItems(itemRepository, quantityTypeRepository, warehouseRepository, itemService, 50);
         Generator.generujTrucks(truckRepository, 5);
-        Generator.generujStockItem(stockItemRepository, quantityTypeRepository, 7);
+        Generator.generujStockItem(stockItemRepository, quantityTypeRepository, 1);
+
 
 
     }

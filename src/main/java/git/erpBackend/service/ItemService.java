@@ -3,9 +3,10 @@ package git.erpBackend.service;
 import git.erpBackend.dto.*;
 import git.erpBackend.entity.*;
 import git.erpBackend.enums.QuantityEnum;
+import git.erpBackend.enums.TransportationTypeEnum;
 import git.erpBackend.repository.*;
-import git.erpBackend.util.DoubleRound;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -130,7 +131,7 @@ public class ItemService {
         double priceForNewPurchase = purchaseItemQuantity * purchaseItemPrice;
 
         double averagePrice = (priceForAllBefore + priceForNewPurchase) / (beforeItemQuantity + purchaseItemQuantity);
-        return DoubleRound.round2Places(averagePrice);
+        return (double) Math.round(averagePrice * 100) / 100;
     }
 
     public List<ItemDto> getListOfItems(){
@@ -197,6 +198,11 @@ public class ItemService {
 
     public ResponseEntity transportItem(TransportItemDto transportItemDto) {
 
+//        ResponseEntity checkTruck = checkTruckCapacity(transportItemDto);
+//        if(!checkTruck.equals(HttpStatus.OK))
+//            return checkTruck;
+        //TODO odblokowac slasze
+
         Optional<Item> optionalItem = itemRepository.findById(transportItemDto.getIdItem());
         if (optionalItem.isEmpty())
             throw new RuntimeException("nie znaleziono itemu o id: " + transportItemDto.getIdItem());
@@ -216,8 +222,7 @@ public class ItemService {
         Warehouse newWarehouseItems = newOptionalWarehouseItems.get();
         Warehouse newWarehouseItemsSum = newOptionalWarehouseItemsSum.get();
 
-        Optional<ItemSum> optionalItemSum = itemSumRepository.findByNameWithWarehouses(item.getName());
-        //TODO by Name && QuantityType
+        Optional<ItemSum> optionalItemSum = itemSumRepository.findByNameWithWarehouses(item.getName());//TODO by Name && QuantityType
         if (optionalItemSum.isEmpty())
             throw new RuntimeException("blad ItemSum");
 
@@ -268,6 +273,20 @@ public class ItemService {
             throw new RuntimeException("wiecej niz 1 item o tej samej nazwie w jednym magazynie");
 
         return ResponseEntity.ok().build();
+    }
+
+    private ResponseEntity checkTruckCapacity(TransportItemDto transportItemDto){
+
+        Optional<Truck> optionalTruck = truckRepository.findById(transportItemDto.getIdTruck());
+        if(optionalTruck.isEmpty())
+            throw new RuntimeException();
+        Truck truck = optionalTruck.get();
+
+        if(transportItemDto.getQuantityToSend() <= truck.getCapacity())
+            return ResponseEntity.ok().build();
+
+        return ResponseEntity.badRequest().build();
+
     }
 
     public ItemSumDto getItemSumById(Integer idItemSum) {
