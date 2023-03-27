@@ -35,9 +35,14 @@ public class Warehouse {
     @EqualsAndHashCode.Exclude
     private List<ItemSum> itemSums;
 
-    public Warehouse(){
+    public Warehouse() {
         items = new ArrayList<>();
         itemSums = new ArrayList<>();
+    }
+
+    public Warehouse(String name, Address address) {
+        this.name = name;
+        this.address = address;
     }
 
     public void addItem(Item item){

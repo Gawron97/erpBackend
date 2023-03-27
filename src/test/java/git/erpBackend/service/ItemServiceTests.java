@@ -47,7 +47,6 @@ public class ItemServiceTests {
         warehouse = new Warehouse();
         warehouse.setIdWarehouse(1);
         warehouse.setName("Warsaw Warehouse");
-        
     }
 
     @Test

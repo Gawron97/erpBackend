@@ -2,10 +2,8 @@ package git.erpBackend.entity;
 
 import git.erpBackend.dto.AddressDto;
 import lombok.*;
-import org.hibernate.Hibernate;
 
 import javax.persistence.*;
-import java.util.Objects;
 
 @Entity
 @Getter
@@ -37,6 +35,16 @@ public class Address {
         address.street = dto.getStreet();
         address.streetNumber = dto.getStreetNumber();
         address.country = Country.of(dto.getCountryDto());
+
+        return address;
+    }
+
+    public static Address of(String city, String street, Integer streetNumber, Country country) {
+        Address address = new Address();
+        address.setCity(city);
+        address.setStreet(street);
+        address.setStreetNumber(streetNumber);
+        address.setCountry(country);
 
         return address;
     }

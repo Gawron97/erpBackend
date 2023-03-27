@@ -43,7 +43,6 @@ public class ItemSum {
 
     public void removeWarehouse(Warehouse warehouse) {
         warehouses.remove(warehouse);
-        warehouse.removeItemSum(this);
     }
 
 }

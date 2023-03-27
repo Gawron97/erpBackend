@@ -38,9 +38,8 @@ public class Item {
         warehouse.addItem(this);
     }
 
-    public void removeWarehouse(Warehouse warehouse){
+    public void removeWarehouse(){
         this.warehouse = null;
-        warehouse.removeItem(this);
     }
 
 }

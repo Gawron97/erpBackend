@@ -1,20 +1,22 @@
 package git.erpBackend.service;
 
-import git.erpBackend.dto.*;
+import git.erpBackend.dto.ItemDto;
+import git.erpBackend.dto.ItemSumDto;
+import git.erpBackend.dto.TransportDto;
+import git.erpBackend.dto.TransportItemDto;
 import git.erpBackend.entity.*;
-import git.erpBackend.enums.QuantityEnum;
-import git.erpBackend.enums.TransportationTypeEnum;
 import git.erpBackend.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional()
 public class ItemService {
 
     private ItemRepository itemRepository;
@@ -231,8 +233,10 @@ public class ItemService {
         //powyzej dane przygotowane do dzialania
 
         if (transportItemDto.getQuantityToSend() == item.getQuantity()) {
-            item.removeWarehouse(oldWarehouseItems);
+            item.removeWarehouse();
             itemSum.removeWarehouse(oldWarehouseItemsSum);
+            oldWarehouseItemsSum.removeItemSum(itemSum);
+            oldWarehouseItems.removeItem(item);
             itemRepository.delete(item);
 
         } else
