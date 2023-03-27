@@ -109,7 +109,7 @@ public class Generator {
             }
 
             Optional<Warehouse> warehouse = warehouseRepository.
-                    findByIdWithItems(warehouses.get(faker.number().numberBetween(0, 6)).getIdWarehouse());
+                    findById(warehouses.get(faker.number().numberBetween(0, 6)).getIdWarehouse());
 
             item.setIdWarehouse(warehouse.get().getIdWarehouse());
 

@@ -93,9 +93,8 @@ public class ItemServiceTests {
         itemDto.setPrice(20);
         itemDto.setIdWarehouse(1);
 
-        when(warehouseRepository.findByIdWithItems(itemDto.getIdWarehouse())).thenReturn(Optional.of(warehouse));
-        when(warehouseRepository.findByIdWithItemSums(itemDto.getIdWarehouse())).thenReturn(Optional.of(warehouse));
-        when(itemSumRepository.findByNameWithWarehouses(itemDto.getName())).thenReturn(Optional.ofNullable(null));
+        when(warehouseRepository.findById(itemDto.getIdWarehouse())).thenReturn(Optional.of(warehouse));
+        when(itemSumRepository.findByName(itemDto.getName())).thenReturn(Optional.ofNullable(null));
         when(quantityTypeRepository.findById(itemDto.getQuantityTypeDto().getIdQuantityType())).thenReturn(Optional.of(quantityType));
 
         itemService.saveItem(itemDto);
@@ -157,9 +156,8 @@ public class ItemServiceTests {
         itemDto.setPrice(30);
         itemDto.setIdWarehouse(2);
 
-        when(warehouseRepository.findByIdWithItems(itemDto.getIdWarehouse())).thenReturn(Optional.of(wroclawWarehouse));
-        when(warehouseRepository.findByIdWithItemSums(itemDto.getIdWarehouse())).thenReturn(Optional.of(wroclawWarehouse));
-        when(itemSumRepository.findByNameWithWarehouses(itemDto.getName())).thenReturn(Optional.of(itemSum));
+        when(warehouseRepository.findById(itemDto.getIdWarehouse())).thenReturn(Optional.of(wroclawWarehouse));
+        when(itemSumRepository.findByName(itemDto.getName())).thenReturn(Optional.of(itemSum));
         when(quantityTypeRepository.findById(itemDto.getQuantityTypeDto().getIdQuantityType())).thenReturn(Optional.of(quantityType));
 
         itemService.saveItem(itemDto);
@@ -224,9 +222,8 @@ public class ItemServiceTests {
         itemDto.setPrice(30);
         itemDto.setIdWarehouse(2);
 
-        when(warehouseRepository.findByIdWithItems(itemDto.getIdWarehouse())).thenReturn(Optional.of(wroclawWarehouse));
-        when(warehouseRepository.findByIdWithItemSums(itemDto.getIdWarehouse())).thenReturn(Optional.of(wroclawWarehouse));
-        when(itemSumRepository.findByNameWithWarehouses(itemDto.getName())).thenReturn(Optional.of(itemSum));
+        when(warehouseRepository.findById(itemDto.getIdWarehouse())).thenReturn(Optional.of(wroclawWarehouse));
+        when(itemSumRepository.findByName(itemDto.getName())).thenReturn(Optional.of(itemSum));
         when(quantityTypeRepository.findById(itemDto.getQuantityTypeDto().getIdQuantityType())).thenReturn(Optional.of(quantityType));
 
         itemService.saveItem(itemDto);
@@ -272,9 +269,8 @@ public class ItemServiceTests {
         itemDto.setPrice(10);
         itemDto.setIdWarehouse(1);
 
-        when(warehouseRepository.findByIdWithItems(itemDto.getIdWarehouse())).thenReturn(Optional.of(warehouse));
-        when(warehouseRepository.findByIdWithItemSums(itemDto.getIdWarehouse())).thenReturn(Optional.of(warehouse));
-        when(itemSumRepository.findByNameWithWarehouses(itemDto.getName())).thenReturn(Optional.of(itemSum));
+        when(warehouseRepository.findById(itemDto.getIdWarehouse())).thenReturn(Optional.of(warehouse));
+        when(itemSumRepository.findByName(itemDto.getName())).thenReturn(Optional.of(itemSum));
         when(quantityTypeRepository.findById(itemDto.getQuantityTypeDto().getIdQuantityType())).thenReturn(Optional.of(quantityType));
 
         itemService.saveItem(itemDto);
@@ -348,9 +344,8 @@ public class ItemServiceTests {
         itemDto.setPrice(15);
         itemDto.setIdWarehouse(1);
 
-        when(warehouseRepository.findByIdWithItems(itemDto.getIdWarehouse())).thenReturn(Optional.of(warehouse));
-        when(warehouseRepository.findByIdWithItemSums(itemDto.getIdWarehouse())).thenReturn(Optional.of(warehouse));
-        when(itemSumRepository.findByNameWithWarehouses(itemDto.getName())).thenReturn(Optional.of(itemSum));
+        when(warehouseRepository.findById(itemDto.getIdWarehouse())).thenReturn(Optional.of(warehouse));
+        when(itemSumRepository.findByName(itemDto.getName())).thenReturn(Optional.of(itemSum));
         when(quantityTypeRepository.findById(itemDto.getQuantityTypeDto().getIdQuantityType())).thenReturn(Optional.of(quantityType));
 
         itemService.saveItem(itemDto);
@@ -410,15 +405,13 @@ public class ItemServiceTests {
         transportItemDto.setIdItem(1);
         transportItemDto.setIdTruck(1);
         transportItemDto.setTransportationType(TransportationTypeEnum.TRANSPORT_TO_WAREHOUSE.toString());
-        transportItemDto.setNewWarehouseId(2);
+        transportItemDto.setNewWarehouseId(Optional.of(2));
         transportItemDto.setQuantityToSend(50);
 
         when(itemRepository.findById(1)).thenReturn(Optional.of(item));
-        when(warehouseRepository.findByIdWithItems(1)).thenReturn(Optional.of(warehouse));
-        when(warehouseRepository.findByIdWithItemSums(1)).thenReturn(Optional.of(warehouse));
-        when(warehouseRepository.findByIdWithItems(2)).thenReturn(Optional.of(wroclawWarehouse));
-        when(warehouseRepository.findByIdWithItemSums(2)).thenReturn(Optional.of(wroclawWarehouse));
-        when(itemSumRepository.findByNameWithWarehouses("corn")).thenReturn(Optional.of(itemSum));
+        when(warehouseRepository.findById(1)).thenReturn(Optional.of(warehouse));
+        when(warehouseRepository.findById(2)).thenReturn(Optional.of(wroclawWarehouse));
+        when(itemSumRepository.findByName("corn")).thenReturn(Optional.of(itemSum));
 
         itemService.transportItem(transportItemDto);
 
@@ -476,15 +469,13 @@ public class ItemServiceTests {
         transportItemDto.setIdItem(1);
         transportItemDto.setIdTruck(1);
         transportItemDto.setTransportationType(TransportationTypeEnum.TRANSPORT_TO_WAREHOUSE.toString());
-        transportItemDto.setNewWarehouseId(2);
+        transportItemDto.setNewWarehouseId(Optional.of(2));
         transportItemDto.setQuantityToSend(30);
 
         when(itemRepository.findById(1)).thenReturn(Optional.of(item));
-        when(warehouseRepository.findByIdWithItems(1)).thenReturn(Optional.of(warehouse));
-        when(warehouseRepository.findByIdWithItemSums(1)).thenReturn(Optional.of(warehouse));
-        when(warehouseRepository.findByIdWithItems(2)).thenReturn(Optional.of(wroclawWarehouse));
-        when(warehouseRepository.findByIdWithItemSums(2)).thenReturn(Optional.of(wroclawWarehouse));
-        when(itemSumRepository.findByNameWithWarehouses("corn")).thenReturn(Optional.of(itemSum));
+        when(warehouseRepository.findById(1)).thenReturn(Optional.of(warehouse));
+        when(warehouseRepository.findById(2)).thenReturn(Optional.of(wroclawWarehouse));
+        when(itemSumRepository.findByName("corn")).thenReturn(Optional.of(itemSum));
 
         itemService.transportItem(transportItemDto);
 
@@ -561,15 +552,13 @@ public class ItemServiceTests {
         transportItemDto.setIdItem(1);
         transportItemDto.setIdTruck(1);
         transportItemDto.setTransportationType(TransportationTypeEnum.TRANSPORT_TO_WAREHOUSE.toString());
-        transportItemDto.setNewWarehouseId(2);
+        transportItemDto.setNewWarehouseId(Optional.of(2));
         transportItemDto.setQuantityToSend(50);
 
         when(itemRepository.findById(1)).thenReturn(Optional.of(firstItem));
-        when(warehouseRepository.findByIdWithItems(1)).thenReturn(Optional.of(warehouse));
-        when(warehouseRepository.findByIdWithItemSums(1)).thenReturn(Optional.of(warehouse));
-        when(warehouseRepository.findByIdWithItems(2)).thenReturn(Optional.of(wroclawWarehouse));
-        when(warehouseRepository.findByIdWithItemSums(2)).thenReturn(Optional.of(wroclawWarehouse));
-        when(itemSumRepository.findByNameWithWarehouses("corn")).thenReturn(Optional.of(itemSum));
+        when(warehouseRepository.findById(1)).thenReturn(Optional.of(warehouse));
+        when(warehouseRepository.findById(2)).thenReturn(Optional.of(wroclawWarehouse));
+        when(itemSumRepository.findByName("corn")).thenReturn(Optional.of(itemSum));
         when(itemRepository.findById(2)).thenReturn(Optional.of(secondItem));
 
         itemService.transportItem(transportItemDto);
@@ -638,15 +627,13 @@ public class ItemServiceTests {
         transportItemDto.setIdItem(1);
         transportItemDto.setIdTruck(1);
         transportItemDto.setTransportationType(TransportationTypeEnum.TRANSPORT_TO_WAREHOUSE.toString());
-        transportItemDto.setNewWarehouseId(2);
+        transportItemDto.setNewWarehouseId(Optional.of(2));
         transportItemDto.setQuantityToSend(20);
 
         when(itemRepository.findById(1)).thenReturn(Optional.of(firstItem));
-        when(warehouseRepository.findByIdWithItems(1)).thenReturn(Optional.of(warehouse));
-        when(warehouseRepository.findByIdWithItemSums(1)).thenReturn(Optional.of(warehouse));
-        when(warehouseRepository.findByIdWithItems(2)).thenReturn(Optional.of(wroclawWarehouse));
-        when(warehouseRepository.findByIdWithItemSums(2)).thenReturn(Optional.of(wroclawWarehouse));
-        when(itemSumRepository.findByNameWithWarehouses("corn")).thenReturn(Optional.of(itemSum));
+        when(warehouseRepository.findById(1)).thenReturn(Optional.of(warehouse));
+        when(warehouseRepository.findById(2)).thenReturn(Optional.of(wroclawWarehouse));
+        when(itemSumRepository.findByName("corn")).thenReturn(Optional.of(itemSum));
         when(itemRepository.findById(2)).thenReturn(Optional.of(secondItem));
 
         itemService.transportItem(transportItemDto);

@@ -43,7 +43,7 @@ public class WarehouseService {
 
     public WarehouseDto getWarehouseWithItems(Integer idWarehouse) {
 
-        Optional<Warehouse> warehouseOptional = warehouseRepository.findByIdWithItems(idWarehouse);
+        Optional<Warehouse> warehouseOptional = warehouseRepository.findById(idWarehouse);
 
         if(warehouseOptional.isPresent()){
             return WarehouseDto.of(warehouseOptional.get());
