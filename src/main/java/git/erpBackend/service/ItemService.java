@@ -16,7 +16,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional()
+@Transactional
 public class ItemService {
 
     private ItemRepository itemRepository;
@@ -40,24 +40,16 @@ public class ItemService {
 
     public ItemDto saveItem(ItemDto itemDto){
 
-        Optional<Warehouse> warehouseOptional = warehouseRepository.findByIdWithItems(itemDto.getIdWarehouse());
-        Optional<Warehouse> warehouseOptional2 = warehouseRepository.findByIdWithItemSums(itemDto.getIdWarehouse());
-        Warehouse warehouseWithItems;
-        Warehouse warehouseWithItemSums;
+        Optional<Warehouse> warehouseOptional = warehouseRepository.findById(itemDto.getIdWarehouse());
+        Warehouse warehouse;
 
         if(warehouseOptional.isPresent()){
-            warehouseWithItems = warehouseOptional.get();
+            warehouse = warehouseOptional.get();
         }else{
             throw new RuntimeException("nie ma takiego magazynu");
         }
 
-        if(warehouseOptional2.isPresent()){
-            warehouseWithItemSums = warehouseOptional2.get();
-        }else{
-            throw new RuntimeException("nie ma takiego magazynu");
-        }
-
-        Optional<ItemSum> itemSumOptional = itemSumRepository.findByNameWithWarehouses(itemDto.getName());
+        Optional<ItemSum> itemSumOptional = itemSumRepository.findByName(itemDto.getName());
         ItemSum itemSum;
         Item item;
         QuantityType quantityType;
@@ -75,7 +67,7 @@ public class ItemService {
             itemSum = itemSumOptional.get();
             itemSum.setQuantity(itemSum.getQuantity() + itemDto.getQuantity());
 
-            List<Item> items = warehouseWithItems.getItems();
+            List<Item> items = warehouse.getItems();
             List<Item> possibleItem = items.stream().filter(itemFilter ->
                     itemFilter.getName().equalsIgnoreCase(itemDto.getName())).toList();
 
@@ -96,9 +88,9 @@ public class ItemService {
                 item.setQuantityType(quantityType);
                 item.setQuantity(itemDto.getQuantity());
                 item.setPrice(itemDto.getPrice());
-                item.setWarehouse(warehouseWithItems);
+                item.setWarehouse(warehouse);
 
-                itemSum.addWarehouse(warehouseWithItemSums);
+                itemSum.addWarehouse(warehouse);
             }
 
         }else { // przypadek gdzie przedmiot nie wystepowal w zadnym magazynie
@@ -109,13 +101,13 @@ public class ItemService {
             item.setQuantityType(quantityType);
             item.setQuantity(itemDto.getQuantity());
             item.setPrice(itemDto.getPrice());
-            item.setWarehouse(warehouseWithItems);
+            item.setWarehouse(warehouse);
 
             itemSum = new ItemSum();
             itemSum.setName(item.getName());
             itemSum.setQuantityType(item.getQuantityType());
             itemSum.setQuantity(item.getQuantity());
-            itemSum.addWarehouse(warehouseWithItemSums);
+            itemSum.addWarehouse(warehouse);
 
         }
 
@@ -140,39 +132,6 @@ public class ItemService {
         List<ItemDto> collect = itemRepository.findAll().stream().map(item -> ItemDto.of(item)).collect(Collectors.toList());
         return collect;
     }
-
-//    public ResponseEntity deteleItem(Integer idItem){
-//        Optional<Item> optionalItem = itemRepository.findById(idItem);
-//        if(optionalItem.isEmpty())
-//            throw new RuntimeException("brak takiego przedmiotu");
-//        Item item = optionalItem.get();
-//
-//        Optional<ItemSum> optionalItemSum = itemSumRepository.findByNameWithWarehouses(item.getName());
-//
-//        if(optionalItemSum.isEmpty())
-//            throw new RuntimeException("cos poszlo nie tak");
-//
-//        ItemSum itemSum = optionalItemSum.get();
-//
-//        Optional<Warehouse> optionalWarehouseWithItems = warehouseRepository.findByNameWithItems(item.getWarehouse().getName());
-//        Optional<Warehouse> optionalWarehouseWithItemSums = warehouseRepository.findByNameWithItemSums(item.getWarehouse().getName());
-//
-//        if(optionalWarehouseWithItems.isEmpty() || optionalWarehouseWithItemSums.isEmpty())
-//            throw new RuntimeException("cos nie tak ze sciaganiem magazynow");
-//
-//        itemSum.removeWarehouse(optionalWarehouseWithItemSums.get());
-//        item.removeWarehouse(optionalWarehouseWithItems.get());
-//
-//        itemSum.setQuantity(itemSum.getQuantity() - item.getQuantity());
-//
-//        itemRepository.delete(item);
-//
-//        if(itemSum.getQuantity() == 0)
-//            itemSumRepository.delete(itemSum);
-//
-//        return ResponseEntity.ok().build();
-//
-//    }
 
     public List<ItemSumDto> getListOfItemSum() {
         return itemSumRepository.findAll().stream().map(itemSum -> ItemSumDto.of(itemSum)).toList();
@@ -205,76 +164,89 @@ public class ItemService {
 //            return checkTruck;
         //TODO odblokowac slasze
 
+        Warehouse newWarehouse = null;
+
+        if(transportItemDto.getTransportationType().equalsIgnoreCase("TRANSPORT_TO_WAREHOUSE")) {
+            Integer idNewWarehouse = transportItemDto.getNewWarehouseId().orElseThrow(() -> {
+                throw new RuntimeException("nie podano id magazynu, do ktorego chcemy przetransportowac");
+            });
+            Optional<Warehouse> optionalNewWarehouse = warehouseRepository.findById(idNewWarehouse);
+            newWarehouse = optionalNewWarehouse.orElseThrow(() -> {
+                throw new RuntimeException("blad magazynu");
+            });
+
+        }
+
         Optional<Item> optionalItem = itemRepository.findById(transportItemDto.getIdItem());
-        if (optionalItem.isEmpty())
+        Item item = optionalItem.orElseThrow(() -> {
             throw new RuntimeException("nie znaleziono itemu o id: " + transportItemDto.getIdItem());
+        });
 
-        Item item = optionalItem.get();
-
-        Optional<Warehouse> optionalOldWarehouseItems = warehouseRepository.findByIdWithItems(item.getWarehouse().getIdWarehouse());
-        Optional<Warehouse> optionalOldWarehouseItemsSum = warehouseRepository.findByIdWithItemSums(item.getWarehouse().getIdWarehouse());
-        Optional<Warehouse> newOptionalWarehouseItems = warehouseRepository.findByIdWithItems(transportItemDto.getNewWarehouseId());
-        Optional<Warehouse> newOptionalWarehouseItemsSum = warehouseRepository.findByIdWithItemSums(transportItemDto.getNewWarehouseId());
-        if (optionalOldWarehouseItems.isEmpty() || optionalOldWarehouseItemsSum.isEmpty() ||
-                newOptionalWarehouseItemsSum.isEmpty() || newOptionalWarehouseItems.isEmpty())
+        Optional<Warehouse> optionalOldWarehouse = warehouseRepository.findById(item.getWarehouse().getIdWarehouse());
+        Warehouse oldWarehouse = optionalOldWarehouse.orElseThrow(() -> {
             throw new RuntimeException("blad magazynu");
+        });
 
-        Warehouse oldWarehouseItems = optionalOldWarehouseItems.get();
-        Warehouse oldWarehouseItemsSum = optionalOldWarehouseItemsSum.get();
-        Warehouse newWarehouseItems = newOptionalWarehouseItems.get();
-        Warehouse newWarehouseItemsSum = newOptionalWarehouseItemsSum.get();
-
-        Optional<ItemSum> optionalItemSum = itemSumRepository.findByNameWithWarehouses(item.getName());//TODO by Name && QuantityType
-        if (optionalItemSum.isEmpty())
+        Optional<ItemSum> optionalItemSum = itemSumRepository.findByName(item.getName());//TODO by Name && QuantityType
+        ItemSum itemSum = optionalItemSum.orElseThrow(() -> {
             throw new RuntimeException("blad ItemSum");
+        });
 
-        ItemSum itemSum = optionalItemSum.get();
+        if(transportItemDto.getQuantityToSend() > item.getQuantity()) {
+            throw new RuntimeException("nie ma wystarczajaco duzo produktu w magazynie");
+        }
 
         //powyzej dane przygotowane do dzialania
 
         if (transportItemDto.getQuantityToSend() == item.getQuantity()) {
             item.removeWarehouse();
-            itemSum.removeWarehouse(oldWarehouseItemsSum);
-            oldWarehouseItemsSum.removeItemSum(itemSum);
-            oldWarehouseItems.removeItem(item);
+            itemSum.removeWarehouse(oldWarehouse);
+            oldWarehouse.removeItemSum(itemSum);
+            oldWarehouse.removeItem(item);
             itemRepository.delete(item);
 
-        } else
+        } else {
             item.setQuantity(item.getQuantity() - transportItemDto.getQuantityToSend());
+        }
 
-        if(transportItemDto.getTransportationType().equalsIgnoreCase("SELL"))
+        if(transportItemDto.getTransportationType().equalsIgnoreCase("SELL")) {
+            itemSum.setQuantity(itemSum.getQuantity() - transportItemDto.getQuantityToSend());
+            if(itemSum.getQuantity() == 0) {
+                itemSumRepository.delete(itemSum);
+            }
             return ResponseEntity.ok().build();
+        }
         //jesli item sprzedajemy to koniec dzialania
 
-        List<Item> filterItems = newWarehouseItems.getItems().stream().filter(filterItem -> filterItem.getName().equalsIgnoreCase(item.getName())
+        List<Item> filterItems = newWarehouse.getItems().stream().filter(filterItem ->
+                filterItem.getName().equalsIgnoreCase(item.getName())
                 && filterItem.getQuantityType().equals(item.getQuantityType())).toList();
 
-        if (filterItems.size() == 1) {
-            Item foundItem = filterItems.get(0);
-            Optional<Item> optionalExistingItem = itemRepository.findById(foundItem.getIdItem());
-            if(optionalExistingItem.isEmpty())
-                throw new RuntimeException("blad itemu");
 
-            Item existingItem = optionalExistingItem.get();
+        if (filterItems.size() == 1) { //jesli item juz byl w magazynie
+            Item existingItem = filterItems.get(0);
+
             double averagePrice = calculateAveragePrice(existingItem.getQuantity(), existingItem.getPrice(),
                     transportItemDto.getQuantityToSend(), item.getPrice());
+
             existingItem.setQuantity(existingItem.getQuantity() + transportItemDto.getQuantityToSend());
             existingItem.setPrice(averagePrice);
 
-        } else if (filterItems.size() == 0) {
+        } else if (filterItems.size() == 0) { // jesli itemu w magazynie nie bylo
 
             Item newItem = new Item();
             newItem.setName(itemSum.getName());
             newItem.setQuantityType(itemSum.getQuantityType());
             newItem.setQuantity(transportItemDto.getQuantityToSend());
             newItem.setPrice(item.getPrice());
-            newItem.setWarehouse(newWarehouseItems);
-            itemSum.addWarehouse(newWarehouseItemsSum);
+            newItem.setWarehouse(newWarehouse);
+            itemSum.addWarehouse(newWarehouse);
 
             itemRepository.save(newItem);
 
-        } else
+        } else {
             throw new RuntimeException("wiecej niz 1 item o tej samej nazwie w jednym magazynie");
+        }
 
         return ResponseEntity.ok().build();
     }
@@ -290,11 +262,12 @@ public class ItemService {
             return ResponseEntity.ok().build();
 
         return ResponseEntity.badRequest().build();
+        //TODO throw exception
 
     }
 
     public ItemSumDto getItemSumById(Integer idItemSum) {
-        Optional<ItemSum> optionalItemSum = itemSumRepository.findByIdWithWarehouses(idItemSum);
+        Optional<ItemSum> optionalItemSum = itemSumRepository.findById(idItemSum);
         if(optionalItemSum.isEmpty())
             throw new RuntimeException("nie ma itemSum o takim id");
 
