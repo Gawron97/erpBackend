@@ -4,11 +4,11 @@ import git.erpBackend.dto.WarehouseCBDto;
 import git.erpBackend.dto.WarehouseDto;
 import git.erpBackend.entity.Address;
 import git.erpBackend.entity.Country;
-import git.erpBackend.entity.ItemSum;
 import git.erpBackend.entity.Warehouse;
 import git.erpBackend.repository.CountryRepository;
 import git.erpBackend.repository.WarehouseRepository;
-import org.checkerframework.checker.units.qual.A;
+import git.erpBackend.utils.exception.warehouse.WarehouseCountNotBeDeleted;
+import git.erpBackend.utils.exception.warehouse.WarehouseNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -31,40 +31,30 @@ public class WarehouseService {
         this.countryRepository = countryRepository;
     }
 
-
-    public WarehouseDto getWarehouseDetails(Integer idWarehouse) {
-        Optional<Warehouse> warehouseOptional = warehouseRepository.findById(idWarehouse);
-
-        if(warehouseOptional.isPresent()){
-            return WarehouseDto.of(warehouseOptional.get());
-        }
-        throw new RuntimeException("Nie znaleziono magazynu o id: " + idWarehouse);
-    }
-
-    public WarehouseDto getWarehouseWithItems(Integer idWarehouse) {
+    public WarehouseDto getWarehouse(Integer idWarehouse) {
 
         Optional<Warehouse> warehouseOptional = warehouseRepository.findById(idWarehouse);
-
-        if(warehouseOptional.isPresent()){
-            return WarehouseDto.of(warehouseOptional.get());
-        }
-        throw new RuntimeException("Nie znaleziono magazynu o id: " + idWarehouse);
+        Warehouse warehouse = warehouseOptional.orElseThrow(() -> {
+            throw new WarehouseNotFoundException();
+        });
+        return WarehouseDto.of(warehouse);
 
     }
 
     public ResponseEntity deleteWarehouses(Integer idWarehouse){
 
         Optional<Warehouse> warehouseOptional = warehouseRepository.findById(idWarehouse);
-        Warehouse warehouse = warehouseOptional.orElseThrow(() -> new RuntimeException("brak takiego magazynu"));
+        Warehouse warehouse = warehouseOptional.orElseThrow(() -> new WarehouseNotFoundException());
         if(warehouse.getItems().size() > 0) {
-            throw new RuntimeException("nie mozna usunać magazynu, poniewaz przechowuje produkty");
+            throw new WarehouseCountNotBeDeleted();
         }
         warehouseRepository.deleteById(idWarehouse);
         return ResponseEntity.ok().build();
     }
 
     public List<WarehouseDto> getListOfWarehouses(){
-        return warehouseRepository.findAll().stream().map(warehouse -> WarehouseDto.of(warehouse)).collect(Collectors.toList());
+        throw new WarehouseNotFoundException();
+//        return warehouseRepository.findAll().stream().map(warehouse -> WarehouseDto.of(warehouse)).collect(Collectors.toList());
     }
 
     public ResponseEntity saveOrUpdateWarehouse(WarehouseDto warehouseDto) {
@@ -91,9 +81,7 @@ public class WarehouseService {
     }
 
     public List<WarehouseCBDto> getWarehousesCB() {
-
         return warehouseRepository.findAll().stream().map(warehouse -> WarehouseCBDto.of(warehouse)).toList();
-
     }
 
 }

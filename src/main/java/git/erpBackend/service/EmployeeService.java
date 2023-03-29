@@ -3,6 +3,7 @@ package git.erpBackend.service;
 import git.erpBackend.dto.EmployeeDto;
 import git.erpBackend.entity.Employee;
 import git.erpBackend.repository.EmployeeRepository;
+import git.erpBackend.utils.exception.employee.EmployeeNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,7 @@ public class EmployeeService {
         else {
             Optional<Employee> optionalEmployee = employeeRepository.findById(employeeDto.getIdEmployee());
             employee = optionalEmployee.orElseThrow(() -> {
-                throw new RuntimeException("Nie mozna znalezc takiego uzytownika");
+                throw new EmployeeNotFoundException();
             });
             employee.setName(employeeDto.getName());
             employee.setSurname(employeeDto.getSurname());
@@ -42,7 +43,7 @@ public class EmployeeService {
     public EmployeeDto getEmployee(Integer idEmployee) {
         Optional<Employee> optionalEmployee = employeeRepository.findById(idEmployee);
         Employee employee = optionalEmployee.orElseThrow(() -> {
-            throw new RuntimeException("nie znaleziono pracownika");
+            throw new EmployeeNotFoundException();
         });
         return EmployeeDto.of(employee);
     }

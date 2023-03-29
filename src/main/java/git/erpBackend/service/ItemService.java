@@ -6,6 +6,15 @@ import git.erpBackend.dto.TransportDto;
 import git.erpBackend.dto.TransportItemDto;
 import git.erpBackend.entity.*;
 import git.erpBackend.repository.*;
+import git.erpBackend.utils.exception.item.DuplicateItemException;
+import git.erpBackend.utils.exception.item.ItemNotFoundException;
+import git.erpBackend.utils.exception.item.ItemSumNotFoundException;
+import git.erpBackend.utils.exception.item.NotEnoughItemQuantityException;
+import git.erpBackend.utils.exception.quantityType.QuantityTypeNotFound;
+import git.erpBackend.utils.exception.truck.TruckCapacityException;
+import git.erpBackend.utils.exception.truck.TruckNotFoundException;
+import git.erpBackend.utils.exception.warehouse.IdWarehouseMissingException;
+import git.erpBackend.utils.exception.warehouse.WarehouseNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -46,7 +55,7 @@ public class ItemService {
         if(warehouseOptional.isPresent()){
             warehouse = warehouseOptional.get();
         }else{
-            throw new RuntimeException("nie ma takiego magazynu");
+            throw new WarehouseNotFoundException();
         }
 
         Optional<ItemSum> itemSumOptional = itemSumRepository.findByName(itemDto.getName());
@@ -56,7 +65,7 @@ public class ItemService {
 
         Optional<QuantityType> quantityTypeOptional = quantityTypeRepository.findById(itemDto.getQuantityTypeDto().getIdQuantityType());
         if(quantityTypeOptional.isEmpty())
-            throw new RuntimeException("zle QuantityType");
+            throw new QuantityTypeNotFound();
         else
             quantityType = quantityTypeOptional.get();
 
@@ -140,7 +149,7 @@ public class ItemService {
     public ItemDto getItemById(Integer idItem){
         Optional<Item> optionalItem = itemRepository.findById(idItem);
         if (optionalItem.isEmpty())
-            throw new RuntimeException("nie ma takiego itemu");
+            throw new ItemNotFoundException();
         return ItemDto.of(optionalItem.get());
     }
 
@@ -149,7 +158,7 @@ public class ItemService {
         Optional<Item> optionalItem = itemRepository.findById(idItem);
 
         if (optionalItem.isEmpty())
-            throw new RuntimeException("blad przedmiotu");
+            throw new ItemNotFoundException();
 
         List<Truck> trucks = truckRepository.findAll();
 
@@ -168,32 +177,32 @@ public class ItemService {
 
         if(transportItemDto.getTransportationType().equalsIgnoreCase("TRANSPORT_TO_WAREHOUSE")) {
             Integer idNewWarehouse = transportItemDto.getNewWarehouseId().orElseThrow(() -> {
-                throw new RuntimeException("nie podano id magazynu, do ktorego chcemy przetransportowac");
+                throw new IdWarehouseMissingException();
             });
             Optional<Warehouse> optionalNewWarehouse = warehouseRepository.findById(idNewWarehouse);
             newWarehouse = optionalNewWarehouse.orElseThrow(() -> {
-                throw new RuntimeException("blad magazynu");
+                throw new WarehouseNotFoundException();
             });
 
         }
 
         Optional<Item> optionalItem = itemRepository.findById(transportItemDto.getIdItem());
         Item item = optionalItem.orElseThrow(() -> {
-            throw new RuntimeException("nie znaleziono itemu o id: " + transportItemDto.getIdItem());
+            throw new ItemNotFoundException();
         });
 
         Optional<Warehouse> optionalOldWarehouse = warehouseRepository.findById(item.getWarehouse().getIdWarehouse());
         Warehouse oldWarehouse = optionalOldWarehouse.orElseThrow(() -> {
-            throw new RuntimeException("blad magazynu");
+            throw new WarehouseNotFoundException();
         });
 
         Optional<ItemSum> optionalItemSum = itemSumRepository.findByName(item.getName());//TODO by Name && QuantityType
         ItemSum itemSum = optionalItemSum.orElseThrow(() -> {
-            throw new RuntimeException("blad ItemSum");
+            throw new ItemNotFoundException();
         });
 
         if(transportItemDto.getQuantityToSend() > item.getQuantity()) {
-            throw new RuntimeException("nie ma wystarczajaco duzo produktu w magazynie");
+            throw new NotEnoughItemQuantityException();
         }
 
         //powyzej dane przygotowane do dzialania
@@ -245,7 +254,7 @@ public class ItemService {
             itemRepository.save(newItem);
 
         } else {
-            throw new RuntimeException("wiecej niz 1 item o tej samej nazwie w jednym magazynie");
+            throw new DuplicateItemException();
         }
 
         return ResponseEntity.ok().build();
@@ -255,21 +264,20 @@ public class ItemService {
 
         Optional<Truck> optionalTruck = truckRepository.findById(transportItemDto.getIdTruck());
         if(optionalTruck.isEmpty())
-            throw new RuntimeException();
+            throw new TruckNotFoundException();
         Truck truck = optionalTruck.get();
 
-        if(transportItemDto.getQuantityToSend() <= truck.getCapacity())
-            return ResponseEntity.ok().build();
-
-        return ResponseEntity.badRequest().build();
-        //TODO throw exception
+        if(transportItemDto.getQuantityToSend() > truck.getCapacity()) {
+            throw new TruckCapacityException();
+        }
+        return ResponseEntity.ok().build();
 
     }
 
     public ItemSumDto getItemSumById(Integer idItemSum) {
         Optional<ItemSum> optionalItemSum = itemSumRepository.findById(idItemSum);
         if(optionalItemSum.isEmpty())
-            throw new RuntimeException("nie ma itemSum o takim id");
+            throw new ItemSumNotFoundException();
 
         return ItemSumDto.of(optionalItemSum.get());
     }
