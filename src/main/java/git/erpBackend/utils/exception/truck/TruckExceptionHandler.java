@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class TruckExceptionHandler {
 
     @ExceptionHandler(TruckNotFoundException.class)
-    public ResponseEntity<ErrorInfo> handleTruckNotDoundException(TruckNotFoundException ex) {
-        return ResponseEntity.status(ex.getStatus()).body(new ErrorInfo(ex.getMessage()));
+    public ResponseEntity<ErrorInfo> handleTruckNotFoundException(TruckNotFoundException ex) {
+        return ResponseEntity.status(ex.getStatus()).build();
     }
 
     @ExceptionHandler(TruckCapacityException.class)
     public ResponseEntity<ErrorInfo> handleTruckNotDoundException(TruckCapacityException ex) {
-        return ResponseEntity.status(ex.getStatus()).body(new ErrorInfo(ex.getMessage()));
+        return ResponseEntity.status(ex.getStatus()).build();
     }
 }

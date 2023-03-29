@@ -10,17 +10,17 @@ public class WarehouseExceptionHandler {
 
     @ExceptionHandler(WarehouseNotFoundException.class)
     public ResponseEntity<ErrorInfo> handleWarehouseNotFoundException(WarehouseNotFoundException ex) {
-        return ResponseEntity.status(ex.getStatus()).body(new ErrorInfo(ex.getMessage()));
+        return ResponseEntity.status(ex.getStatus()).build();
     }
 
     @ExceptionHandler(WarehouseCountNotBeDeleted.class)
     public ResponseEntity<ErrorInfo> handleWarehouseCouldNotDeleteException(WarehouseCountNotBeDeleted ex) {
-        return ResponseEntity.status(ex.getStatus()).body(new ErrorInfo(ex.getMessage()));
+        return ResponseEntity.status(ex.getStatus()).build();
     }
 
     @ExceptionHandler(IdWarehouseMissingException.class)
     public ResponseEntity<ErrorInfo> handleIdWarehouseMissingException(IdWarehouseMissingException ex) {
-        return ResponseEntity.status(ex.getStatus()).body(new ErrorInfo(ex.getMessage()));
+        return ResponseEntity.status(ex.getStatus()).build();
     }
 
 }

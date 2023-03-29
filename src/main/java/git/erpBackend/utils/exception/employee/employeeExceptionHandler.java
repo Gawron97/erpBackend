@@ -6,11 +6,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
-public class employeeExcpetionHandler {
+public class employeeExceptionHandler {
 
     @ExceptionHandler(EmployeeNotFoundException.class)
     public ResponseEntity<ErrorInfo> handleEmployeeException(EmployeeNotFoundException ex){
-        return ResponseEntity.status(ex.getStatus()).body(new ErrorInfo(ex.getMessage()));
+        return ResponseEntity.status(ex.getStatus()).build();
     }
 
 }

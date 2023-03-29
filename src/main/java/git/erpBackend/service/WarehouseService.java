@@ -53,7 +53,8 @@ public class WarehouseService {
     }
 
     public List<WarehouseDto> getListOfWarehouses(){
-        return warehouseRepository.findAll().stream().map(warehouse -> WarehouseDto.of(warehouse)).collect(Collectors.toList());
+        throw new WarehouseNotFoundException();
+//        return warehouseRepository.findAll().stream().map(warehouse -> WarehouseDto.of(warehouse)).collect(Collectors.toList());
     }
 
     public ResponseEntity saveOrUpdateWarehouse(WarehouseDto warehouseDto) {

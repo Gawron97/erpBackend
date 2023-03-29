@@ -10,22 +10,22 @@ public class ItemExceptionHandler {
 
     @ExceptionHandler(ItemNotFoundException.class)
     public ResponseEntity<ErrorInfo> handleItemNotFoundException(ItemNotFoundException ex) {
-        return ResponseEntity.status(ex.getStatus()).body(new ErrorInfo(ex.getMessage()));
+        return ResponseEntity.status(ex.getStatus()).build();
     }
 
     @ExceptionHandler(ItemSumNotFoundException.class)
     public ResponseEntity<ErrorInfo> handleItemNotFoundException(ItemSumNotFoundException ex) {
-        return ResponseEntity.status(ex.getStatus()).body(new ErrorInfo(ex.getMessage()));
+        return ResponseEntity.status(ex.getStatus()).build();
     }
 
     @ExceptionHandler(NotEnoughItemQuantityException.class)
     public ResponseEntity<ErrorInfo> handleNotEnoughItemQuantityException(NotEnoughItemQuantityException ex) {
-        return ResponseEntity.status(ex.getStatus()).body(new ErrorInfo(ex.getMessage()));
+        return ResponseEntity.status(ex.getStatus()).build();
     }
 
     @ExceptionHandler(DuplicateItemException.class)
     public ResponseEntity<ErrorInfo> handleDuplicateItemException(DuplicateItemException ex) {
-        return ResponseEntity.status(ex.getStatus()).body(new ErrorInfo(ex.getMessage()));
+        return ResponseEntity.status(ex.getStatus()).build();
     }
 
 }
