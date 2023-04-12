@@ -40,7 +40,7 @@ public class Generator {
 
         for(int i=0; i<ile; i++){
             Employee employee = new Employee();
-            employee.setPesel(faker.bothify("123456789"));
+            employee.setPesel(String.valueOf(faker.number().numberBetween(11111111111L, 99999999999L)));
             employee.setName(faker.name().firstName());
             employee.setSurname(faker.name().lastName());
             employee.setSalary(Integer.toString(faker.number().numberBetween(1000, 10000)));
