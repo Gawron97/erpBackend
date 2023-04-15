@@ -29,10 +29,11 @@ public class Operator {
         employee.setOperator(this);
     }
 
-    public static Operator of(OperatorRegisterCredentialsDto dto){
+    public static Operator of(String login, String password, Employee employee){
         Operator operator = new Operator();
-        operator.login = dto.getLogin();
-        operator.password = dto.getPassword();
+        operator.login = login;
+        operator.password = password;
+        operator.employee = employee;
 
         return operator;
     }

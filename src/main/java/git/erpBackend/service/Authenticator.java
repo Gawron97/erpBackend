@@ -7,6 +7,8 @@ import git.erpBackend.entity.Operator;
 import git.erpBackend.repository.EmployeeRepository;
 import git.erpBackend.repository.OperatorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -14,14 +16,15 @@ import java.util.Optional;
 @Component
 public class Authenticator {
 
-    private OperatorRepository operatorRepository;
-
-    private EmployeeRepository employeeRepository;
+    private final OperatorRepository operatorRepository;
+    private final EmployeeRepository employeeRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public Authenticator(OperatorRepository operatorRepository, EmployeeRepository employeeRepository){
         this.operatorRepository = operatorRepository;
         this.employeeRepository = employeeRepository;
+        passwordEncoder = new BCryptPasswordEncoder();
     }
 
 
@@ -53,8 +56,8 @@ public class Authenticator {
 
         registerCredentialsDto.setAuthenticated(true);
 
-        Operator operator = Operator.of(registerCredentialsDto);
-        operator.setEmployee(employee);
+        Operator operator = Operator.of(registerCredentialsDto.getLogin(),
+                passwordEncoder.encode(registerCredentialsDto.getPassword()), employee);
 
         operatorRepository.save(operator);
 
