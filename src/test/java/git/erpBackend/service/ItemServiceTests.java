@@ -19,7 +19,6 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
 public class ItemServiceTests {
 
     private ItemRepository itemRepository;
