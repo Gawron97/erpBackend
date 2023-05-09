@@ -13,9 +13,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 @EnableScheduling
 public class ErpBackendApplication {
 
-	@Autowired
-	StockItemService stockItemService;
-
 	public static void main(String[] args) {
 		SpringApplication.run(ErpBackendApplication.class, args);
 	}
