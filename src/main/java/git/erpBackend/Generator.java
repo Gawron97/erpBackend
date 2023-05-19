@@ -133,8 +133,8 @@ public class Generator {
     public static void generujStockItem(StockItemRepository stockItemRepository,
                                         QuantityTypeRepository quantityTypeRepository, int ile){
 
-        Optional<QuantityType> OpquantityType = quantityTypeRepository.findById(1);
-        QuantityType quantityType = OpquantityType.get();
+        Optional<QuantityType> QuantityType = quantityTypeRepository.findById(1);
+        QuantityType quantityType = QuantityType.get();
 
         for(int i=0; i<ile; i++){
             StockItem stockItem = new StockItem();

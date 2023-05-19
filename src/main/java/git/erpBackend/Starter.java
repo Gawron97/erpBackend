@@ -1,14 +1,13 @@
 package git.erpBackend;
 
-import git.erpBackend.entity.Employee;
-import git.erpBackend.entity.ItemSum;
-import git.erpBackend.entity.Operator;
-import git.erpBackend.entity.QuantityType;
+import git.erpBackend.entity.*;
 import git.erpBackend.repository.*;
 import git.erpBackend.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+
+import javax.transaction.Transactional;
 
 @Component
 public class Starter implements CommandLineRunner {
@@ -61,8 +60,6 @@ public class Starter implements CommandLineRunner {
         Generator.generujItems(itemRepository, quantityTypeRepository, warehouseRepository, itemService, 50);
         Generator.generujTrucks(truckRepository, 5);
         Generator.generujStockItem(stockItemRepository, quantityTypeRepository, 1);
-
-
 
     }
 }

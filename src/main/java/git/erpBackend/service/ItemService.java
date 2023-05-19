@@ -49,30 +49,20 @@ public class ItemService {
 
     public ItemDto saveItem(ItemDto itemDto){
 
-        Optional<Warehouse> warehouseOptional = warehouseRepository.findById(itemDto.getIdWarehouse());
-        Warehouse warehouse;
-
-        if(warehouseOptional.isPresent()){
-            warehouse = warehouseOptional.get();
-        }else{
-            throw new WarehouseNotFoundException();
-        }
+        Warehouse warehouse = warehouseRepository.findById(itemDto.getIdWarehouse()).orElseThrow(() ->
+                new WarehouseNotFoundException());
 
         Optional<ItemSum> itemSumOptional = itemSumRepository.findByName(itemDto.getName());
         ItemSum itemSum;
         Item item;
-        QuantityType quantityType;
 
-        Optional<QuantityType> quantityTypeOptional = quantityTypeRepository.findById(itemDto.getQuantityTypeDto().getIdQuantityType());
-        if(quantityTypeOptional.isEmpty())
-            throw new QuantityTypeNotFound();
-        else
-            quantityType = quantityTypeOptional.get();
+        QuantityType quantityType = quantityTypeRepository.findById(itemDto.getQuantityTypeDto().getIdQuantityType())
+                .orElseThrow(() -> new QuantityTypeNotFound());
 
         //koniec inicjalizacji zmiennych
         //czesc wykonawcza
 
-        if(itemSumOptional.isPresent()){
+        if(itemSumOptional.isPresent()) {
             itemSum = itemSumOptional.get();
             itemSum.setQuantity(itemSum.getQuantity() + itemDto.getQuantity());
 
@@ -80,7 +70,7 @@ public class ItemService {
             List<Item> possibleItem = items.stream().filter(itemFilter ->
                     itemFilter.getName().equalsIgnoreCase(itemDto.getName())).toList();
 
-            if(possibleItem.size() == 1){//przypadek gdzie przedmiot w magazynie juz byl
+            if(possibleItem.size() == 1) {//przypadek gdzie przedmiot w magazynie juz byl
 
                 item = possibleItem.get(0);
                 double averagePrice = calculateAveragePrice(item.getQuantity(), item.getPrice(),
