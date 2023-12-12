@@ -1,9 +1,8 @@
 package git.erpBackend.entity;
 
 import git.erpBackend.dto.AddressDto;
+import jakarta.persistence.*;
 import lombok.*;
-
-import javax.persistence.*;
 
 @Entity
 @Getter

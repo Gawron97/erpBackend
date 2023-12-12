@@ -4,6 +4,7 @@ import git.erpBackend.dto.EmployeeDto;
 import git.erpBackend.entity.Employee;
 import git.erpBackend.repository.EmployeeRepository;
 import git.erpBackend.service.EmployeeService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,8 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
+@SecurityRequirement(name = "user_password")
+
 public class EmployeeController {
 
     private final EmployeeService employeeService;

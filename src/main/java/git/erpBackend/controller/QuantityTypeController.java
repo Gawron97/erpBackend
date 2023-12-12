@@ -6,6 +6,7 @@ import git.erpBackend.entity.QuantityType;
 import git.erpBackend.repository.ItemRepository;
 import git.erpBackend.repository.QuantityTypeRepository;
 import git.erpBackend.service.QuantityTypeService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@SecurityRequirement(name = "user_password")
 public class QuantityTypeController {
 
     private final QuantityTypeRepository quantityTypeRepository;

@@ -5,6 +5,7 @@ import git.erpBackend.dto.ItemSumDto;
 import git.erpBackend.dto.TransportDto;
 import git.erpBackend.dto.TransportItemDto;
 import git.erpBackend.service.ItemService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@SecurityRequirement(name = "user_password")
 public class ItemController {
 
     private final ItemService itemService;
