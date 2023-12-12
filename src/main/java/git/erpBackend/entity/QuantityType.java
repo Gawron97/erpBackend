@@ -1,13 +1,14 @@
 package git.erpBackend.entity;
 
 import git.erpBackend.enums.QuantityEnum;
-import lombok.*;
-import org.hibernate.Hibernate;
+import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Getter

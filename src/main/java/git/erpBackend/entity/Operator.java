@@ -1,24 +1,33 @@
 package git.erpBackend.entity;
 
-import git.erpBackend.dto.OperatorRegisterCredentialsDto;
+import git.erpBackend.enums.Role;
+import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.Hibernate;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
-import java.util.Objects;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode
-public class Operator {
+@Builder
+public class Operator implements UserDetails {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idOperator;
-    private String login;
+    private String username;
     private String password;
+    @Enumerated(value = EnumType.STRING)
+    private Role role;
+    private Boolean isEnabled;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "idEmployee")
@@ -29,12 +38,29 @@ public class Operator {
         employee.setOperator(this);
     }
 
-    public static Operator of(OperatorRegisterCredentialsDto dto){
-        Operator operator = new Operator();
-        operator.login = dto.getLogin();
-        operator.password = dto.getPassword();
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role.toString()));
+    }
 
-        return operator;
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return isEnabled;
     }
 
 }

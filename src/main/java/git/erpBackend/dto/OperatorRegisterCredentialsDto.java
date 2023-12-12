@@ -1,14 +1,16 @@
 package git.erpBackend.dto;
 
-import git.erpBackend.entity.Operator;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
 public class OperatorRegisterCredentialsDto {
 
+    @NotBlank
     private String pesel;
-    private String login;
+    @NotBlank
+    private String username;
+    @NotBlank
     private String password;
-    private Boolean authenticated;
 
 }

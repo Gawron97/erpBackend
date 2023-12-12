@@ -1,11 +1,8 @@
 package git.erpBackend.entity;
 
 import git.erpBackend.enums.PositionEnum;
+import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.Hibernate;
-
-import javax.persistence.*;
-import java.util.Objects;
 
 @Entity
 @Getter

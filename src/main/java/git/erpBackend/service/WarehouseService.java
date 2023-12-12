@@ -9,11 +9,11 @@ import git.erpBackend.repository.CountryRepository;
 import git.erpBackend.repository.WarehouseRepository;
 import git.erpBackend.utils.exception.warehouse.WarehouseCountNotBeDeleted;
 import git.erpBackend.utils.exception.warehouse.WarehouseNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
