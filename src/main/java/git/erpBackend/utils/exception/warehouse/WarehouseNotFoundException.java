@@ -13,4 +13,9 @@ public class WarehouseNotFoundException extends RuntimeException {
         status = HttpStatus.NOT_FOUND;
     }
 
+    public WarehouseNotFoundException(String message){
+        super(message);
+        status = HttpStatus.NOT_FOUND;
+    }
+
 }

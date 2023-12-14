@@ -8,24 +8,29 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class ItemExceptionHandler {
 
+    @ExceptionHandler(ItemNotExistsInWarehouseException.class)
+    public ResponseEntity<ErrorInfo> handleItemNotExistsInWarehouseException(ItemNotExistsInWarehouseException ex) {
+        return ResponseEntity.status(ex.getStatus()).body(new ErrorInfo(ex.getMessage()));
+    }
+
     @ExceptionHandler(ItemNotFoundException.class)
     public ResponseEntity<ErrorInfo> handleItemNotFoundException(ItemNotFoundException ex) {
-        return ResponseEntity.status(ex.getStatus()).build();
+        return ResponseEntity.status(ex.getStatus()).body(new ErrorInfo(ex.getMessage()));
     }
 
     @ExceptionHandler(ItemSumNotFoundException.class)
     public ResponseEntity<ErrorInfo> handleItemNotFoundException(ItemSumNotFoundException ex) {
-        return ResponseEntity.status(ex.getStatus()).build();
+        return ResponseEntity.status(ex.getStatus()).body(new ErrorInfo(ex.getMessage()));
     }
 
     @ExceptionHandler(NotEnoughItemQuantityException.class)
     public ResponseEntity<ErrorInfo> handleNotEnoughItemQuantityException(NotEnoughItemQuantityException ex) {
-        return ResponseEntity.status(ex.getStatus()).build();
+        return ResponseEntity.status(ex.getStatus()).body(new ErrorInfo(ex.getMessage()));
     }
 
     @ExceptionHandler(DuplicateItemException.class)
     public ResponseEntity<ErrorInfo> handleDuplicateItemException(DuplicateItemException ex) {
-        return ResponseEntity.status(ex.getStatus()).build();
+        return ResponseEntity.status(ex.getStatus()).body(new ErrorInfo(ex.getMessage()));
     }
 
 }

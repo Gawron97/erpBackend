@@ -10,7 +10,7 @@ public class QuantityTypeExceptionHandler {
 
     @ExceptionHandler(QuantityTypeNotFound.class)
     public ResponseEntity<ErrorInfo> handleQuantityNotFoundException(QuantityTypeNotFound ex) {
-        return ResponseEntity.status(ex.getStatus()).build();
+        return ResponseEntity.status(ex.getStatus()).body(new ErrorInfo(ex.getMessage()));
     }
 
 }

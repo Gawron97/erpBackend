@@ -13,4 +13,9 @@ public class WarehouseCountNotBeDeleted extends RuntimeException {
         status = HttpStatus.BAD_REQUEST;
     }
 
+    public WarehouseCountNotBeDeleted(String message){
+        super(message);
+        status = HttpStatus.BAD_REQUEST;
+    }
+
 }

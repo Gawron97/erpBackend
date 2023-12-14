@@ -13,4 +13,9 @@ public class TruckNotFoundException extends RuntimeException {
         status = HttpStatus.NOT_FOUND;
     }
 
+    public TruckNotFoundException(String message) {
+        super(message);
+        status = HttpStatus.NOT_FOUND;
+    }
+
 }

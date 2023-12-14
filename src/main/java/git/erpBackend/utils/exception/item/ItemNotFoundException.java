@@ -13,4 +13,9 @@ public class ItemNotFoundException extends RuntimeException {
         status = HttpStatus.NOT_FOUND;
     }
 
+    public ItemNotFoundException(String message) {
+        super(message);
+        status = HttpStatus.NOT_FOUND;
+    }
+
 }

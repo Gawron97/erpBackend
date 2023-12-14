@@ -13,4 +13,9 @@ public class NotEnoughItemQuantityException extends RuntimeException {
         status = HttpStatus.BAD_REQUEST;
     }
 
+    public NotEnoughItemQuantityException(String message) {
+        super(message);
+        status = HttpStatus.BAD_REQUEST;
+    }
+
 }

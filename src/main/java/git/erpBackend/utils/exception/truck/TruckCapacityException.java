@@ -13,4 +13,9 @@ public class TruckCapacityException extends RuntimeException{
         status = HttpStatus.BAD_REQUEST;
     }
 
+    public TruckCapacityException(String message) {
+        super(message);
+        status = HttpStatus.BAD_REQUEST;
+    }
+
 }

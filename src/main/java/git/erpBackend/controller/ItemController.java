@@ -54,7 +54,7 @@ public class ItemController {
 
     @GetMapping("/items_sum/{idItemSum}")
     public ItemSumDto GetItemSum(@PathVariable Integer idItemSum){
-        return itemService.getItemSumById(idItemSum);
+        return itemService.getItemSum(idItemSum);
     }
 
     @GetMapping("/transport/{idItem}")

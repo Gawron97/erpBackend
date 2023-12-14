@@ -13,4 +13,9 @@ public class EmployeeNotFoundException extends RuntimeException {
         status = HttpStatus.NOT_FOUND;
     }
 
+    public EmployeeNotFoundException(String message) {
+        super(message);
+        status = HttpStatus.NOT_FOUND;
+    }
+
 }

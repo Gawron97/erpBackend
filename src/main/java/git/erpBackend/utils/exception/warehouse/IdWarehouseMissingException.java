@@ -13,4 +13,9 @@ public class IdWarehouseMissingException extends RuntimeException {
         status = HttpStatus.BAD_REQUEST;
     }
 
+    public IdWarehouseMissingException(String message){
+        super(message);
+        status = HttpStatus.BAD_REQUEST;
+    }
+
 }

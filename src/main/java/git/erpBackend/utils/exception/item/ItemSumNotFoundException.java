@@ -13,4 +13,9 @@ public class ItemSumNotFoundException extends RuntimeException{
         status = HttpStatus.NOT_FOUND;
     }
 
+    public ItemSumNotFoundException(String message) {
+        super(message);
+        status = HttpStatus.NOT_FOUND;
+    }
+
 }

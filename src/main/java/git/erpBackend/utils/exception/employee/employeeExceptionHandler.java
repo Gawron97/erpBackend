@@ -10,7 +10,7 @@ public class employeeExceptionHandler {
 
     @ExceptionHandler(EmployeeNotFoundException.class)
     public ResponseEntity<ErrorInfo> handleEmployeeException(EmployeeNotFoundException ex){
-        return ResponseEntity.status(ex.getStatus()).build();
+        return ResponseEntity.status(ex.getStatus()).body(new ErrorInfo(ex.getMessage()));
     }
 
 }

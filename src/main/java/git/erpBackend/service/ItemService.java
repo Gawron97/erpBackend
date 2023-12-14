@@ -3,6 +3,7 @@ package git.erpBackend.service;
 import git.erpBackend.dto.*;
 import git.erpBackend.entity.*;
 import git.erpBackend.repository.*;
+import git.erpBackend.utils.exception.item.ItemNotExistsInWarehouseException;
 import git.erpBackend.utils.exception.item.ItemNotFoundException;
 import git.erpBackend.utils.exception.item.ItemSumNotFoundException;
 import git.erpBackend.utils.exception.item.NotEnoughItemQuantityException;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -47,9 +49,17 @@ public class ItemService {
         return itemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
     }
 
+    private Truck getTruckById(Integer id) {
+        return truckRepository.findById(id).orElseThrow(TruckNotFoundException::new);
+    }
+
+    private ItemSum getItemSumById(Integer idItemSum) {
+        return itemSumRepository.findById(idItemSum).orElseThrow(ItemSumNotFoundException::new);
+    }
+
     private void validateIfItemExistsInWarehouse(Item item, Warehouse warehouse) {
         if(!item.getWarehouse().equals(warehouse)) {
-            throw new RuntimeException();
+            throw new ItemNotExistsInWarehouseException();
         }
     }
 
@@ -152,31 +162,24 @@ public class ItemService {
     }
 
     public List<ItemDto> getListOfItems(){
-        List<ItemDto> collect = itemRepository.findAll().stream().map(item -> ItemDto.of(item)).collect(Collectors.toList());
-        return collect;
+        return itemRepository.findAll().stream().map(ItemDto::of).toList();
     }
 
     public List<ItemSumDto> getListOfItemSum() {
-        return itemSumRepository.findAll().stream().map(itemSum -> ItemSumDto.of(itemSum)).toList();
+        return itemSumRepository.findAll().stream().map(ItemSumDto::of).toList();
     }
 
     public ItemDto getItem(Integer idItem){
-        Optional<Item> optionalItem = itemRepository.findById(idItem);
-        if (optionalItem.isEmpty())
-            throw new ItemNotFoundException();
-        return ItemDto.of(optionalItem.get());
+        return ItemDto.of(getItemById(idItem));
     }
 
     public TransportDto getTransportDetails(Integer idItem) {
 
-        Optional<Item> optionalItem = itemRepository.findById(idItem);
-
-        if (optionalItem.isEmpty())
-            throw new ItemNotFoundException();
+        Item optionalItem = getItemById(idItem);
 
         List<Truck> trucks = truckRepository.findAll();
 
-        return TransportDto.of(optionalItem.get(), trucks);
+        return TransportDto.of(optionalItem, trucks);
 
     }
 
@@ -188,6 +191,7 @@ public class ItemService {
 
     public ItemDto transportItem(TransportItemDto transportItem) {
 
+        validateTruckCapacity(transportItem.getIdTruck(), transportItem.getQuantityToSend());
         Item item = getItemById(transportItem.getIdItem());
         Warehouse oldWarehouse = getWarehouseById(transportItem.getOldWarehouseId());
         validateIfItemExistsInWarehouse(item, oldWarehouse);
@@ -237,25 +241,17 @@ public class ItemService {
     }
 
 
-    private ResponseEntity checkTruckCapacity(TransportItemDto transportItemDto){
+    private void validateTruckCapacity(Integer truckId, double neededQuantity) {
+        Truck truck = getTruckById(truckId);
 
-        Optional<Truck> optionalTruck = truckRepository.findById(transportItemDto.getIdTruck());
-        if(optionalTruck.isEmpty())
-            throw new TruckNotFoundException();
-        Truck truck = optionalTruck.get();
-
-        if(transportItemDto.getQuantityToSend() > truck.getCapacity()) {
-            throw new TruckCapacityException();
+        if(truck.getCapacity() < neededQuantity) {
+            throw new TruckCapacityException(MessageFormat.format("Capacity of truck with id: {0} is not enough",
+                    truckId));
         }
-        return ResponseEntity.ok().build();
 
     }
 
-    public ItemSumDto getItemSumById(Integer idItemSum) {
-        Optional<ItemSum> optionalItemSum = itemSumRepository.findById(idItemSum);
-        if(optionalItemSum.isEmpty())
-            throw new ItemSumNotFoundException();
-
-        return ItemSumDto.of(optionalItemSum.get());
+    public ItemSumDto getItemSum(Integer idItemSum) {
+        return ItemSumDto.of(getItemSumById(idItemSum));
     }
 }

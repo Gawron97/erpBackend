@@ -10,11 +10,11 @@ public class TruckExceptionHandler {
 
     @ExceptionHandler(TruckNotFoundException.class)
     public ResponseEntity<ErrorInfo> handleTruckNotFoundException(TruckNotFoundException ex) {
-        return ResponseEntity.status(ex.getStatus()).build();
+        return ResponseEntity.status(ex.getStatus()).body(new ErrorInfo(ex.getMessage()));
     }
 
     @ExceptionHandler(TruckCapacityException.class)
-    public ResponseEntity<ErrorInfo> handleTruckNotDoundException(TruckCapacityException ex) {
-        return ResponseEntity.status(ex.getStatus()).build();
+    public ResponseEntity<ErrorInfo> handleTruckNotFoundException(TruckCapacityException ex) {
+        return ResponseEntity.status(ex.getStatus()).body(new ErrorInfo(ex.getMessage()));
     }
 }

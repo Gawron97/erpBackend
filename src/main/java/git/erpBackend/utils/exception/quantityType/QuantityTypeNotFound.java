@@ -13,4 +13,9 @@ public class QuantityTypeNotFound extends RuntimeException {
         status = HttpStatus.NOT_FOUND;
     }
 
+    public QuantityTypeNotFound(String message) {
+        super(message);
+        status = HttpStatus.NOT_FOUND;
+    }
+
 }

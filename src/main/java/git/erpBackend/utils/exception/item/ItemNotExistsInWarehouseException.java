@@ -4,18 +4,19 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
-public class DuplicateItemException extends RuntimeException {
+public class ItemNotExistsInWarehouseException extends RuntimeException {
 
     private final HttpStatus status;
 
-    public DuplicateItemException(){
-        super("there is already this item in this warehouse");
+    public ItemNotExistsInWarehouseException() {
+        super("Item not exists in warehouse");
         status = HttpStatus.BAD_REQUEST;
     }
 
-    public DuplicateItemException(String message) {
+    public ItemNotExistsInWarehouseException(String message) {
         super(message);
         status = HttpStatus.BAD_REQUEST;
     }
+
 
 }
