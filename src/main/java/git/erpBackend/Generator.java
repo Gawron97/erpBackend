@@ -113,7 +113,7 @@ public class Generator {
 
             item.setIdWarehouse(warehouse.get().getIdWarehouse());
 
-            itemService.saveItem(item);
+            itemService.addItem(item);
 
         }
 

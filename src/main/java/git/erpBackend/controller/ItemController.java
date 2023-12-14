@@ -1,9 +1,6 @@
 package git.erpBackend.controller;
 
-import git.erpBackend.dto.ItemDto;
-import git.erpBackend.dto.ItemSumDto;
-import git.erpBackend.dto.TransportDto;
-import git.erpBackend.dto.TransportItemDto;
+import git.erpBackend.dto.*;
 import git.erpBackend.service.ItemService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
@@ -15,28 +12,39 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @SecurityRequirement(name = "user_password")
+@RequestMapping("/items")
 public class ItemController {
 
     private final ItemService itemService;
 
-    @PostMapping("/items")
-    public ItemDto newItem(@RequestBody ItemDto item){
-        return itemService.saveItem(item);
+    @PostMapping("add")
+    public ItemDto addItem(@RequestBody ItemDto item) {
+        return itemService.addItem(item);
     }
 
-    @GetMapping("/items")
+    @PostMapping("edit/{itemId}")
+    public ItemDto editItem(@RequestBody ItemDto item, @PathVariable Integer itemId) {
+        return itemService.editItem(item, itemId);
+    }
+
+    @PostMapping("/transport")
+    public ItemDto transportItem(@RequestBody TransportItemDto transportItem) {
+        return itemService.transportItem(transportItem);
+    }
+
+    @PostMapping("/sell")
+    public ItemDto sellItem(@RequestBody SellItemDto sellItem) {
+        return itemService.sellItem(sellItem);
+    }
+
+    @GetMapping
     public List<ItemDto> getListOfItems(){
         return itemService.getListOfItems();
     }
 
-//    @DeleteMapping("/items/{idItem}")
-//    public ResponseEntity deteleItem(@PathVariable Integer idItem){
-//        return itemService.deteleItem(idItem);
-//    }
-
-    @GetMapping("items/{idItem}")
+    @GetMapping("{idItem}")
     public ItemDto getItem(@PathVariable Integer idItem){
-        return itemService.getItemById(idItem);
+        return itemService.getItem(idItem);
     }
 
     @GetMapping("/items_sum")
@@ -45,18 +53,13 @@ public class ItemController {
     }
 
     @GetMapping("/items_sum/{idItemSum}")
-    public ItemSumDto getListOfSumOfItems(@PathVariable Integer idItemSum){
+    public ItemSumDto GetItemSum(@PathVariable Integer idItemSum){
         return itemService.getItemSumById(idItemSum);
     }
 
     @GetMapping("/transport/{idItem}")
     public TransportDto getTransportDto(@PathVariable Integer idItem){
         return itemService.getTransportDetails(idItem);
-    }
-
-    @PostMapping("/transport")
-    public ResponseEntity transportItem(@RequestBody TransportItemDto transportItemDto){
-        return itemService.transportItem(transportItemDto);//TODO przechwycic wyjatek rzucany w funkcji
     }
 
 }

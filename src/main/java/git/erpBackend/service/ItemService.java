@@ -1,120 +1,144 @@
 package git.erpBackend.service;
 
-import git.erpBackend.dto.ItemDto;
-import git.erpBackend.dto.ItemSumDto;
-import git.erpBackend.dto.TransportDto;
-import git.erpBackend.dto.TransportItemDto;
+import git.erpBackend.dto.*;
 import git.erpBackend.entity.*;
 import git.erpBackend.repository.*;
-import git.erpBackend.utils.exception.item.DuplicateItemException;
 import git.erpBackend.utils.exception.item.ItemNotFoundException;
 import git.erpBackend.utils.exception.item.ItemSumNotFoundException;
 import git.erpBackend.utils.exception.item.NotEnoughItemQuantityException;
 import git.erpBackend.utils.exception.quantityType.QuantityTypeNotFound;
 import git.erpBackend.utils.exception.truck.TruckCapacityException;
 import git.erpBackend.utils.exception.truck.TruckNotFoundException;
-import git.erpBackend.utils.exception.warehouse.IdWarehouseMissingException;
 import git.erpBackend.utils.exception.warehouse.WarehouseNotFoundException;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class ItemService {
 
-    private ItemRepository itemRepository;
-    private WarehouseRepository warehouseRepository;
-    private ItemSumRepository itemSumRepository;
-    private QuantityTypeRepository quantityTypeRepository;
-    private TruckRepository truckRepository;
+    private final ItemRepository itemRepository;
+    private final WarehouseRepository warehouseRepository;
+    private final ItemSumRepository itemSumRepository;
+    private final QuantityTypeRepository quantityTypeRepository;
+    private final TruckRepository truckRepository;
 
-    public ItemService(){
+    private Warehouse getWarehouseById(Integer id) {
+        return warehouseRepository.findById(id).orElseThrow(WarehouseNotFoundException::new);
     }
 
-    @Autowired
-    public ItemService(ItemRepository itemRepository, WarehouseRepository warehouseRepository, ItemSumRepository itemSumRepository,
-                       QuantityTypeRepository quantityTypeRepository, TruckRepository truckRepository){
-        this.itemRepository = itemRepository;
-        this.warehouseRepository = warehouseRepository;
-        this.itemSumRepository = itemSumRepository;
-        this.quantityTypeRepository = quantityTypeRepository;
-        this.truckRepository = truckRepository;
+    private QuantityType getQuantityTypeById(Integer id) {
+        return quantityTypeRepository.findById(id).orElseThrow(QuantityTypeNotFound::new);
     }
 
-    public ItemDto saveItem(ItemDto itemDto){
+    private ItemSum getItemSumByName(String name) {
+        return itemSumRepository.findByName(name).orElseThrow(ItemSumNotFoundException::new);
+    }
 
-        Warehouse warehouse = warehouseRepository.findById(itemDto.getIdWarehouse()).orElseThrow(() ->
-                new WarehouseNotFoundException());
+    private Item getItemById(Integer id) {
+        return itemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
+    }
+
+    private void validateIfItemExistsInWarehouse(Item item, Warehouse warehouse) {
+        if(!item.getWarehouse().equals(warehouse)) {
+            throw new RuntimeException();
+        }
+    }
+
+    public ItemDto editItem(ItemDto itemDto, Integer itemId) {
+
+        Warehouse warehouse = getWarehouseById(itemDto.getIdWarehouse());
+        Item item = getItemById(itemId);
+        validateIfItemExistsInWarehouse(item, warehouse);
+        ItemSum itemSum = getItemSumByName(item.getName());
+        itemSum.setQuantity(itemSum.getQuantity() + itemDto.getQuantity() - item.getQuantity());
+
+        item.setQuantity(itemDto.getQuantity());
+        item.setPrice(itemDto.getPrice());
+
+        Item savedItem = itemRepository.save(item);
+        itemSumRepository.save(itemSum);
+        return ItemDto.of(savedItem);
+    }
+
+    public ItemDto addItem(ItemDto itemDto){
+
+        Warehouse warehouse = getWarehouseById(itemDto.getIdWarehouse());
+        QuantityType quantityType = getQuantityTypeById(itemDto.getQuantityTypeDto().getIdQuantityType());
 
         Optional<ItemSum> itemSumOptional = itemSumRepository.findByName(itemDto.getName());
-        ItemSum itemSum;
         Item item;
 
-        QuantityType quantityType = quantityTypeRepository.findById(itemDto.getQuantityTypeDto().getIdQuantityType())
-                .orElseThrow(() -> new QuantityTypeNotFound());
-
-        //koniec inicjalizacji zmiennych
-        //czesc wykonawcza
-
         if(itemSumOptional.isPresent()) {
-            itemSum = itemSumOptional.get();
-            itemSum.setQuantity(itemSum.getQuantity() + itemDto.getQuantity());
+            item = handleExistingItem(itemDto, warehouse, itemSumOptional.get(), quantityType);
+        }else {
+            item = handleNewItem(itemDto, warehouse, quantityType);
+        }
+        Item savedItem = itemRepository.save(item);
+        return ItemDto.of(savedItem);
+    }
 
-            List<Item> items = warehouse.getItems();
-            List<Item> possibleItem = items.stream().filter(itemFilter ->
-                    itemFilter.getName().equalsIgnoreCase(itemDto.getName())).toList();
+    private Item handleNewItem(ItemDto itemDto, Warehouse warehouse, QuantityType quantityType) {
+        Item item = createNewItemToWarehouse(itemDto, warehouse, quantityType);
+        warehouse.addItem(item);
 
-            if(possibleItem.size() == 1) {//przypadek gdzie przedmiot w magazynie juz byl
+        ItemSum itemSum = createNewItemSum(item);
+        itemSum.addWarehouse(item.getWarehouse());
 
-                item = possibleItem.get(0);
-                double averagePrice = calculateAveragePrice(item.getQuantity(), item.getPrice(),
-                        itemDto.getQuantity(), itemDto.getPrice());
+        itemSumRepository.save(itemSum);
+        return item;
+    }
 
-                item.setQuantity(item.getQuantity() + itemDto.getQuantity());
-                item.setPrice(averagePrice);
+    private ItemSum createNewItemSum(Item item) {
+        return ItemSum.builder()
+                .name(item.getName())
+                .quantity(item.getQuantity())
+                .quantityType(item.getQuantityType())
+                .warehouses(new ArrayList<>())
+                .build();
+    }
 
-            }else {//pzypadek gdzie przedmiotu w magazynie nie bylo
-
-                item = new Item();
-                item.setName(itemDto.getName());
-
-                item.setQuantityType(quantityType);
-                item.setQuantity(itemDto.getQuantity());
-                item.setPrice(itemDto.getPrice());
-                item.setWarehouse(warehouse);
-
-                itemSum.addWarehouse(warehouse);
-            }
-
-        }else { // przypadek gdzie przedmiot nie wystepowal w zadnym magazynie
-
-            item = new Item();
-            item.setName(itemDto.getName());
-
-            item.setQuantityType(quantityType);
-            item.setQuantity(itemDto.getQuantity());
-            item.setPrice(itemDto.getPrice());
-            item.setWarehouse(warehouse);
-
-            itemSum = new ItemSum();
-            itemSum.setName(item.getName());
-            itemSum.setQuantityType(item.getQuantityType());
-            itemSum.setQuantity(item.getQuantity());
+    private Item handleExistingItem(ItemDto itemDto, Warehouse warehouse, ItemSum itemSum, QuantityType quantityType) {
+        Optional<Item> optionalItem = itemRepository.findItemByNameAndWarehouse(itemDto.getName(), warehouse);
+        Item item;
+        if(optionalItem.isPresent()) {
+            item = updateExistingItemInWarehouse(itemDto, optionalItem.get());
+        } else {
+            item = createNewItemToWarehouse(itemDto, warehouse, quantityType);
+            warehouse.addItem(item);
             itemSum.addWarehouse(warehouse);
-
         }
 
-        itemRepository.save(item);
+        itemSum.setQuantity(itemSum.getQuantity() + itemDto.getQuantity());
         itemSumRepository.save(itemSum);
+        return item;
+    }
 
+    private Item createNewItemToWarehouse(ItemDto itemDto, Warehouse warehouse, QuantityType quantityType) {
 
-        return itemDto;
+        return Item.builder()
+                .name(itemDto.getName())
+                .quantityType(quantityType)
+                .quantity(itemDto.getQuantity())
+                .price(itemDto.getPrice())
+                .warehouse(warehouse)
+                .build();
+    }
+
+    private Item updateExistingItemInWarehouse(ItemDto itemDto, Item item) {
+        double averagePrice = calculateAveragePrice(item.getQuantity(), item.getPrice(),
+                itemDto.getQuantity(), itemDto.getPrice());
+        item.setQuantity(item.getQuantity() + itemDto.getQuantity());
+        item.setPrice(averagePrice);
+        return item;
     }
 
     private double calculateAveragePrice(double beforeItemQuantity, double beforeItemPrice,
@@ -136,7 +160,7 @@ public class ItemService {
         return itemSumRepository.findAll().stream().map(itemSum -> ItemSumDto.of(itemSum)).toList();
     }
 
-    public ItemDto getItemById(Integer idItem){
+    public ItemDto getItem(Integer idItem){
         Optional<Item> optionalItem = itemRepository.findById(idItem);
         if (optionalItem.isEmpty())
             throw new ItemNotFoundException();
@@ -156,99 +180,62 @@ public class ItemService {
 
     }
 
-    public ResponseEntity transportItem(TransportItemDto transportItemDto) {
-
-//        ResponseEntity checkTruck = checkTruckCapacity(transportItemDto);
-//        if(!checkTruck.equals(HttpStatus.OK))
-//            return checkTruck;
-        //TODO odblokowac slasze
-
-        Warehouse newWarehouse = null;
-
-        if(transportItemDto.getTransportationType().equalsIgnoreCase("TRANSPORT_TO_WAREHOUSE")) {
-            Integer idNewWarehouse = transportItemDto.getNewWarehouseId().orElseThrow(() -> {
-                throw new IdWarehouseMissingException();
-            });
-            Optional<Warehouse> optionalNewWarehouse = warehouseRepository.findById(idNewWarehouse);
-            newWarehouse = optionalNewWarehouse.orElseThrow(() -> {
-                throw new WarehouseNotFoundException();
-            });
-
-        }
-
-        Optional<Item> optionalItem = itemRepository.findById(transportItemDto.getIdItem());
-        Item item = optionalItem.orElseThrow(() -> {
-            throw new ItemNotFoundException();
-        });
-
-        Optional<Warehouse> optionalOldWarehouse = warehouseRepository.findById(item.getWarehouse().getIdWarehouse());
-        Warehouse oldWarehouse = optionalOldWarehouse.orElseThrow(() -> {
-            throw new WarehouseNotFoundException();
-        });
-
-        Optional<ItemSum> optionalItemSum = itemSumRepository.findByName(item.getName());//TODO by Name && QuantityType
-        ItemSum itemSum = optionalItemSum.orElseThrow(() -> {
-            throw new ItemNotFoundException();
-        });
-
-        if(transportItemDto.getQuantityToSend() > item.getQuantity()) {
+    private void validateIfItIsEnoughItemInWarehouse(double quantityToSend, Item item) {
+        if(quantityToSend > item.getQuantity()) {
             throw new NotEnoughItemQuantityException();
         }
-
-        //powyzej dane przygotowane do dzialania
-
-        if (transportItemDto.getQuantityToSend() == item.getQuantity()) {
-            item.removeWarehouse();
-            itemSum.removeWarehouse(oldWarehouse);
-            oldWarehouse.removeItemSum(itemSum);
-            oldWarehouse.removeItem(item);
-            itemRepository.delete(item);
-
-        } else {
-            item.setQuantity(item.getQuantity() - transportItemDto.getQuantityToSend());
-        }
-
-        if(transportItemDto.getTransportationType().equalsIgnoreCase("SELL")) {
-            itemSum.setQuantity(itemSum.getQuantity() - transportItemDto.getQuantityToSend());
-            if(itemSum.getQuantity() == 0) {
-                itemSumRepository.delete(itemSum);
-            }
-            return ResponseEntity.ok().build();
-        }
-        //jesli item sprzedajemy to koniec dzialania
-
-        List<Item> filterItems = newWarehouse.getItems().stream().filter(filterItem ->
-                filterItem.getName().equalsIgnoreCase(item.getName())
-                && filterItem.getQuantityType().equals(item.getQuantityType())).toList();
-
-
-        if (filterItems.size() == 1) { //jesli item juz byl w magazynie
-            Item existingItem = filterItems.get(0);
-
-            double averagePrice = calculateAveragePrice(existingItem.getQuantity(), existingItem.getPrice(),
-                    transportItemDto.getQuantityToSend(), item.getPrice());
-
-            existingItem.setQuantity(existingItem.getQuantity() + transportItemDto.getQuantityToSend());
-            existingItem.setPrice(averagePrice);
-
-        } else if (filterItems.size() == 0) { // jesli itemu w magazynie nie bylo
-
-            Item newItem = new Item();
-            newItem.setName(itemSum.getName());
-            newItem.setQuantityType(itemSum.getQuantityType());
-            newItem.setQuantity(transportItemDto.getQuantityToSend());
-            newItem.setPrice(item.getPrice());
-            newItem.setWarehouse(newWarehouse);
-            itemSum.addWarehouse(newWarehouse);
-
-            itemRepository.save(newItem);
-
-        } else {
-            throw new DuplicateItemException();
-        }
-
-        return ResponseEntity.ok().build();
     }
+
+    public ItemDto transportItem(TransportItemDto transportItem) {
+
+        Item item = getItemById(transportItem.getIdItem());
+        Warehouse oldWarehouse = getWarehouseById(transportItem.getOldWarehouseId());
+        validateIfItemExistsInWarehouse(item, oldWarehouse);
+        validateIfItIsEnoughItemInWarehouse(transportItem.getQuantityToSend(), item);
+
+        Warehouse newWarehouse = getWarehouseById(transportItem.getNewWarehouseId());
+
+        ItemDto itemToTransport = ItemDto.of(item);
+        if(item.getQuantity() == transportItem.getQuantityToSend()) {
+            itemRepository.delete(item);
+        } else {
+            item.setQuantity(item.getQuantity() - transportItem.getQuantityToSend());
+        }
+
+        itemToTransport.setQuantity(transportItem.getQuantityToSend());
+        itemToTransport.setIdWarehouse(newWarehouse.getIdWarehouse());
+        return addItem(itemToTransport);
+
+    }
+
+    public ItemDto sellItem(SellItemDto sellItem) {
+
+        Item item = getItemById(sellItem.getIdItem());
+        Warehouse warehouse = getWarehouseById(sellItem.getOldWarehouseId());
+        validateIfItemExistsInWarehouse(item, warehouse);
+        validateIfItIsEnoughItemInWarehouse(sellItem.getQuantityToSell(), item);
+
+        if(sellItem.getQuantityToSell() == item.getQuantity()) {
+            return deleteItem(item, warehouse.getIdWarehouse());
+        } else {
+            item.setQuantity(item.getQuantity() - sellItem.getQuantityToSell());
+            itemRepository.save(item);
+            return ItemDto.of(item);
+        }
+
+    }
+
+    private ItemDto deleteItem(Item item, Integer warehouseId) {
+        Warehouse warehouse = getWarehouseById(warehouseId);
+        ItemSum itemSum = getItemSumByName(item.getName());
+        item.removeWarehouse();
+        itemSum.removeWarehouse(warehouse);
+        warehouse.removeItemSum(itemSum);
+        warehouse.removeItem(item);
+        itemRepository.delete(item);
+        return ItemDto.of(item);
+    }
+
 
     private ResponseEntity checkTruckCapacity(TransportItemDto transportItemDto){
 

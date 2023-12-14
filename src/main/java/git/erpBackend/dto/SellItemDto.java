@@ -3,19 +3,15 @@ package git.erpBackend.dto;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-import java.util.Optional;
-
 @Data
-public class TransportItemDto {
+public class SellItemDto {
 
     @NotNull
     private Integer idItem;
     @NotNull
-    private double quantityToSend;
+    private double quantityToSell;
     @NotNull
     private Integer oldWarehouseId;
-    @NotNull
-    private Integer newWarehouseId;
     @NotNull
     private Integer idTruck;
 

@@ -6,7 +6,6 @@ import git.erpBackend.service.WarehouseService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,32 +13,33 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @SecurityRequirement(name = "user_password")
+@RequestMapping("/warehouses")
 public class WarehouseController {
 
     private final WarehouseService warehouseService;
 
-    @PostMapping("/warehouses")
+    @PostMapping("/add")
     public ResponseEntity newWarehouse(@RequestBody WarehouseDto warehouse){
         return warehouseService.saveOrUpdateWarehouse(warehouse);
     }
 
-    @GetMapping("/warehouses")
+    @GetMapping()
     public List<WarehouseDto> getListOfWarehouses(){
         return warehouseService.getListOfWarehouses();
     }
 
-    @DeleteMapping("/warehouses/{idWarehouse}")
+    @DeleteMapping("/delete/{idWarehouse}")
     public ResponseEntity deleteWarehouses(@PathVariable Integer idWarehouse){
         return warehouseService.deleteWarehouses(idWarehouse);
     }
 
-    @GetMapping("/warehouses/{idWarehouse}")
+    @GetMapping("{idWarehouse}")
     public WarehouseDto getWarehouse(@PathVariable Integer idWarehouse){
         return warehouseService.getWarehouse(idWarehouse);
     }
 
-    @GetMapping("/warehouses_cb")
-    public List<WarehouseCBDto> getWarehousesCB(){
+    @GetMapping("basic-info")
+    public List<WarehouseCBDto> getWarehousesBasicInfo(){
         return warehouseService.getWarehousesCB();
     }
 

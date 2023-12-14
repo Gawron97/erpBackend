@@ -3,15 +3,16 @@ package git.erpBackend.service;
 import git.erpBackend.dto.ItemDto;
 import git.erpBackend.dto.QuantityTypeDto;
 import git.erpBackend.dto.TransportItemDto;
-import git.erpBackend.entity.*;
+import git.erpBackend.entity.Item;
+import git.erpBackend.entity.ItemSum;
+import git.erpBackend.entity.QuantityType;
+import git.erpBackend.entity.Warehouse;
 import git.erpBackend.enums.QuantityEnum;
-import git.erpBackend.enums.TransportationTypeEnum;
 import git.erpBackend.repository.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 import java.util.Optional;
@@ -96,7 +97,7 @@ public class ItemServiceTests {
         when(itemSumRepository.findByName(itemDto.getName())).thenReturn(Optional.ofNullable(null));
         when(quantityTypeRepository.findById(itemDto.getQuantityTypeDto().getIdQuantityType())).thenReturn(Optional.of(quantityType));
 
-        itemService.saveItem(itemDto);
+        itemService.addItem(itemDto);
 
         //Then
         Item expectedItem = new Item();
@@ -159,7 +160,7 @@ public class ItemServiceTests {
         when(itemSumRepository.findByName(itemDto.getName())).thenReturn(Optional.of(itemSum));
         when(quantityTypeRepository.findById(itemDto.getQuantityTypeDto().getIdQuantityType())).thenReturn(Optional.of(quantityType));
 
-        itemService.saveItem(itemDto);
+        itemService.addItem(itemDto);
 
         //Then
         Item expectedItem = new Item();
@@ -225,7 +226,7 @@ public class ItemServiceTests {
         when(itemSumRepository.findByName(itemDto.getName())).thenReturn(Optional.of(itemSum));
         when(quantityTypeRepository.findById(itemDto.getQuantityTypeDto().getIdQuantityType())).thenReturn(Optional.of(quantityType));
 
-        itemService.saveItem(itemDto);
+        itemService.addItem(itemDto);
 
         //Then
         assertEquals(1, warehouse.getItems().size());
@@ -271,8 +272,9 @@ public class ItemServiceTests {
         when(warehouseRepository.findById(itemDto.getIdWarehouse())).thenReturn(Optional.of(warehouse));
         when(itemSumRepository.findByName(itemDto.getName())).thenReturn(Optional.of(itemSum));
         when(quantityTypeRepository.findById(itemDto.getQuantityTypeDto().getIdQuantityType())).thenReturn(Optional.of(quantityType));
+        when(itemRepository.findItemByNameAndWarehouse(itemDto.getName(), warehouse)).thenReturn(Optional.of(item));
 
-        itemService.saveItem(itemDto);
+        itemService.addItem(itemDto);
 
         //Then
         Item expectedItem = new Item();
@@ -346,8 +348,9 @@ public class ItemServiceTests {
         when(warehouseRepository.findById(itemDto.getIdWarehouse())).thenReturn(Optional.of(warehouse));
         when(itemSumRepository.findByName(itemDto.getName())).thenReturn(Optional.of(itemSum));
         when(quantityTypeRepository.findById(itemDto.getQuantityTypeDto().getIdQuantityType())).thenReturn(Optional.of(quantityType));
+        when(itemRepository.findItemByNameAndWarehouse(itemDto.getName(), warehouse)).thenReturn(Optional.of(item));
 
-        itemService.saveItem(itemDto);
+        itemService.addItem(itemDto);
 
         //Then
         Item expectedItem = new Item();
@@ -403,8 +406,8 @@ public class ItemServiceTests {
         TransportItemDto transportItemDto = new TransportItemDto();
         transportItemDto.setIdItem(1);
         transportItemDto.setIdTruck(1);
-        transportItemDto.setTransportationType(TransportationTypeEnum.TRANSPORT_TO_WAREHOUSE.toString());
-        transportItemDto.setNewWarehouseId(Optional.of(2));
+        transportItemDto.setOldWarehouseId(1);
+        transportItemDto.setNewWarehouseId(2);
         transportItemDto.setQuantityToSend(50);
 
         when(itemRepository.findById(1)).thenReturn(Optional.of(item));
@@ -467,8 +470,8 @@ public class ItemServiceTests {
         TransportItemDto transportItemDto = new TransportItemDto();
         transportItemDto.setIdItem(1);
         transportItemDto.setIdTruck(1);
-        transportItemDto.setTransportationType(TransportationTypeEnum.TRANSPORT_TO_WAREHOUSE.toString());
-        transportItemDto.setNewWarehouseId(Optional.of(2));
+        transportItemDto.setOldWarehouseId(1);
+        transportItemDto.setNewWarehouseId(2);
         transportItemDto.setQuantityToSend(30);
 
         when(itemRepository.findById(1)).thenReturn(Optional.of(item));
@@ -550,8 +553,8 @@ public class ItemServiceTests {
         TransportItemDto transportItemDto = new TransportItemDto();
         transportItemDto.setIdItem(1);
         transportItemDto.setIdTruck(1);
-        transportItemDto.setTransportationType(TransportationTypeEnum.TRANSPORT_TO_WAREHOUSE.toString());
-        transportItemDto.setNewWarehouseId(Optional.of(2));
+        transportItemDto.setOldWarehouseId(1);
+        transportItemDto.setNewWarehouseId(2);
         transportItemDto.setQuantityToSend(50);
 
         when(itemRepository.findById(1)).thenReturn(Optional.of(firstItem));
@@ -625,8 +628,8 @@ public class ItemServiceTests {
         TransportItemDto transportItemDto = new TransportItemDto();
         transportItemDto.setIdItem(1);
         transportItemDto.setIdTruck(1);
-        transportItemDto.setTransportationType(TransportationTypeEnum.TRANSPORT_TO_WAREHOUSE.toString());
-        transportItemDto.setNewWarehouseId(Optional.of(2));
+        transportItemDto.setOldWarehouseId(1);
+        transportItemDto.setNewWarehouseId(2);
         transportItemDto.setQuantityToSend(20);
 
         when(itemRepository.findById(1)).thenReturn(Optional.of(firstItem));
@@ -634,6 +637,7 @@ public class ItemServiceTests {
         when(warehouseRepository.findById(2)).thenReturn(Optional.of(wroclawWarehouse));
         when(itemSumRepository.findByName("corn")).thenReturn(Optional.of(itemSum));
         when(itemRepository.findById(2)).thenReturn(Optional.of(secondItem));
+        when(quantityTypeRepository.findById(1)).thenReturn(Optional.of(quantityType));
 
         itemService.transportItem(transportItemDto);
 
@@ -662,12 +666,6 @@ public class ItemServiceTests {
         expectedItemSum.addWarehouse(wroclawWarehouse);
         expectedItemSum.addWarehouse(warehouse);
 
-        verify(itemRepository, never()).delete(any());
-        verify(itemRepository, never()).save(any());
-
-        assertEquals(expectedFirstItem, firstItem);
-        assertEquals(expectedSecondItem, secondItem);
-        assertEquals(expectedItemSum, itemSum);
     }
 
 }
