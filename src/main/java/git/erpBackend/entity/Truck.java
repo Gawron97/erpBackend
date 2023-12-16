@@ -10,7 +10,9 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @EqualsAndHashCode
 public class Truck {
 

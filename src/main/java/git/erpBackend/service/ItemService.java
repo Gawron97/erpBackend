@@ -13,14 +13,12 @@ import git.erpBackend.utils.exception.truck.TruckNotFoundException;
 import git.erpBackend.utils.exception.warehouse.WarehouseNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -204,6 +202,12 @@ public class ItemService {
             itemRepository.delete(item);
         } else {
             item.setQuantity(item.getQuantity() - transportItem.getQuantityToSend());
+        }
+        ItemSum itemSum = getItemSumByName(item.getName());
+        if(itemSum.getQuantity() == transportItem.getQuantityToSend()) {
+            itemSumRepository.delete(itemSum);
+        } else {
+            itemSum.setQuantity(itemSum.getQuantity() - transportItem.getQuantityToSend());
         }
 
         itemToTransport.setQuantity(transportItem.getQuantityToSend());
