@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@SecurityRequirement(name = "user_password")
+@SecurityRequirement(name = "Bearer Authentication")
 @RequestMapping("/warehouses")
 public class WarehouseController {
 

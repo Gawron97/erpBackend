@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-@SecurityRequirement(name = "user_password")
+@SecurityRequirement(name = "Bearer Authentication")
 
 public class EmployeeController {
 
